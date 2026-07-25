@@ -18,20 +18,24 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.useGlobalPipes(
-  new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-    transformOptions: {
-      enableImplicitConversion: true,
-    },
-  }),
-);
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
 
   await app.listen(process.env.PORT ?? 3000);
 
-  console.log(`Application running on http://localhost:${process.env.PORT ?? 3000}`);
-  console.log(`Swagger available at http://localhost:${process.env.PORT ?? 3000}/api`);
+  console.log(
+    `Application running on http://localhost:${process.env.PORT ?? 3000}`,
+  );
+  console.log(
+    `Swagger available at http://localhost:${process.env.PORT ?? 3000}/api`,
+  );
 }
 
 bootstrap();
