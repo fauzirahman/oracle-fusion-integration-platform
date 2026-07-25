@@ -5,6 +5,8 @@ import { AppController } from './app.controller';
 import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './modules/health/health.module';
 import { validationSchema } from './config/env.validation';
+import { OracleModule } from './modules/oracle/oracle.module';
+import { SystemModule } from './modules/system/system.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -16,6 +18,8 @@ import configuration from './config/configuration';
     }),
     PrismaModule,
     HealthModule,
+    OracleModule,
+    SystemModule,
   ],
   controllers: [AppController],
 })
