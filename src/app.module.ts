@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+
+import { AppController } from './app.controller';
 import { PrismaModule } from './database/prisma.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -8,6 +11,8 @@ import { PrismaModule } from './database/prisma.module';
       isGlobal: true,
     }),
     PrismaModule,
+    HealthModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
