@@ -1,6 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-
+import { Query } from '@nestjs/common';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 import { EmployeesService } from './employees.service';
 
 @ApiTags('Employees')
@@ -12,8 +13,8 @@ export class EmployeesController {
   @ApiOperation({
     summary: 'Get all employees',
   })
-  findAll() {
-    return this.employeesService.findAll();
+  findAll(@Query() query: PaginationQueryDto) {
+    return this.employeesService.findAll(query);
   }
 
   @Get(':id')

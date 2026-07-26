@@ -1,34 +1,39 @@
 import { Injectable } from '@nestjs/common';
 import { OracleClientService } from '../oracle/client/oracle-client.service';
-import { EmployeeResponseDto } from './dto/employee-response.dto';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { EmployeeMapper } from './mappers/employee.mapper';
 
 @Injectable()
 export class EmployeesService {
   constructor(private readonly oracleClient: OracleClientService) {}
 
-  async findAll() {
+  async findAll(query: PaginationQueryDto) {
     const response: any = await this.oracleClient.get(
       '/hcmRestApi/resources/latest/workers?limit=100',
     );
 
-    const employees = response.items.map((employee: any) => ({
-      id: employee.PersonId,
-      employeeNumber: employee.PersonNumber,
-      fullName: employee.DisplayName,
-      firstName: employee.FirstName,
-      lastName: employee.LastName,
-      department: employee.DepartmentName,
-      businessUnit: employee.BusinessUnitName,
-      job: employee.JobName,
-      email: employee.WorkEmail,
-    }));
+    let employees = EmployeeMapper.toResponseList(response.items);
+
+    if (query.search) {
+      const keyword = query.search.toLowerCase();
+
+      employees = employees.filter((employee: any) =>
+        employee.fullName.toLowerCase().includes(keyword),
+      );
+    }
+
+    const total = employees.length;
+
+    employees = employees.slice(query.offset, query.offset + query.limit);
 
     return {
       success: true,
       message: 'Employees retrieved successfully',
       data: employees,
       meta: {
-        count: employees.length,
+        total,
+        limit: query.limit,
+        offset: query.offset,
       },
     };
   }
@@ -53,17 +58,7 @@ export class EmployeesService {
     return {
       success: true,
       message: 'Employee retrieved successfully',
-      data: {
-        id: employee.PersonId,
-        employeeNumber: employee.PersonNumber,
-        fullName: employee.DisplayName,
-        firstName: employee.FirstName,
-        lastName: employee.LastName,
-        department: employee.DepartmentName,
-        businessUnit: employee.BusinessUnitName,
-        job: employee.JobName,
-        email: employee.WorkEmail,
-      },
+      data: EmployeeMapper.toResponse(employee),
     };
   }
 }
