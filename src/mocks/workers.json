@@ -1,0 +1,38 @@
+{
+  "count": 3,
+  "items": [
+    {
+      "PersonId": 1001,
+      "PersonNumber": "E1001",
+      "DisplayName": "John Smith",
+      "FirstName": "John",
+      "LastName": "Smith",
+      "BusinessUnitName": "Vision Operations",
+      "DepartmentName": "Information Technology",
+      "JobName": "Software Engineer",
+      "WorkEmail": "john.smith@example.com"
+    },
+    {
+      "PersonId": 1002,
+      "PersonNumber": "E1002",
+      "DisplayName": "Sarah Johnson",
+      "FirstName": "Sarah",
+      "LastName": "Johnson",
+      "BusinessUnitName": "Vision Operations",
+      "DepartmentName": "Finance",
+      "JobName": "Financial Analyst",
+      "WorkEmail": "sarah.johnson@example.com"
+    },
+    {
+      "PersonId": 1003,
+      "PersonNumber": "E1003",
+      "DisplayName": "Michael Brown",
+      "FirstName": "Michael",
+      "LastName": "Brown",
+      "BusinessUnitName": "Vision Operations",
+      "DepartmentName": "Human Resources",
+      "JobName": "HR Specialist",
+      "WorkEmail": "michael.brown@example.com"
+    }
+  ]
+}

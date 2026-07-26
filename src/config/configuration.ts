@@ -10,9 +10,9 @@ export default () => ({
   },
 
   oracle: {
+    mode: process.env.ORACLE_MODE ?? 'mock',
     baseUrl: process.env.ORACLE_BASE_URL,
     username: process.env.ORACLE_USERNAME,
     password: process.env.ORACLE_PASSWORD,
-    timeout: parseInt(process.env.ORACLE_TIMEOUT ?? '30000', 10),
   },
 });

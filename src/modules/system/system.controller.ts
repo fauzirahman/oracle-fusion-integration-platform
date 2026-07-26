@@ -9,9 +9,17 @@ export class SystemController {
 
   @Get('info')
   @ApiOperation({
-    summary: 'Get application information',
+    summary: 'Application Information',
   })
   getInfo() {
     return this.systemService.getInfo();
+  }
+
+  @Get('oracle/ping')
+  @ApiOperation({
+    summary: 'Check Oracle Fusion Connection',
+  })
+  pingOracle() {
+    return this.systemService.pingOracle();
   }
 }
