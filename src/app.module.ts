@@ -8,6 +8,7 @@ import { validationSchema } from './config/env.validation';
 import { OracleModule } from './modules/oracle/oracle.module';
 import { SystemModule } from './modules/system/system.module';
 import configuration from './config/configuration';
+import { EmployeesModule } from './modules/employees/employees.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import configuration from './config/configuration';
     HealthModule,
     OracleModule,
     SystemModule,
+    EmployeesModule,
   ],
   controllers: [AppController],
 })
