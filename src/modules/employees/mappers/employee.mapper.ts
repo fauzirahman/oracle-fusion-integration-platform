@@ -3,7 +3,7 @@ export class EmployeeMapper {
     return {
       id: employee.PersonId,
       employeeNumber: employee.PersonNumber,
-      fullName: employee.DisplayName,
+      fullName: employee.FullDisplayName,
       firstName: employee.FirstName,
       lastName: employee.LastName,
       department: employee.DepartmentName,

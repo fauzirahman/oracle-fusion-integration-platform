@@ -1,0 +1,23 @@
+{
+  "count": 3,
+  "items": [
+    {
+      "DepartmentId": 100,
+      "DepartmentName": "Information Technology",
+      "ManagerName": "John Smith",
+      "LocationName": "Jakarta"
+    },
+    {
+      "DepartmentId": 200,
+      "DepartmentName": "Finance",
+      "ManagerName": "Sarah Johnson",
+      "LocationName": "Jakarta"
+    },
+    {
+      "DepartmentId": 300,
+      "DepartmentName": "Human Resources",
+      "ManagerName": "Michael Brown",
+      "LocationName": "Bandung"
+    }
+  ]
+}
