@@ -1,23 +1,25 @@
-import { Injectable } from '@nestjs/common';
 import { OracleClientService } from '../oracle/client/oracle-client.service';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 import { EmployeeMapper } from './mappers/employee.mapper';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { OracleWorker } from './interfaces/oracle-worker.interface';
+import { OracleCollectionResponse } from '../oracle/interfaces/oracle-collection-response.interface';
 
 @Injectable()
 export class EmployeesService {
   constructor(private readonly oracleClient: OracleClientService) {}
 
-  async findAll(query: PaginationQueryDto) {
-    const response: any = await this.oracleClient.get(
-      '/hcmRestApi/resources/latest/workers?limit=100',
-    );
+  async findAll(query: PaginationQueryDto) {    
+    const response = await this.oracleClient.get<
+      OracleCollectionResponse<OracleWorker>
+    >('/hcmRestApi/resources/latest/workers?limit=100');
 
     let employees = EmployeeMapper.toResponseList(response.items);
 
     if (query.search) {
       const keyword = query.search.toLowerCase();
 
-      employees = employees.filter((employee: any) =>
+      employees = employees.filter((employee) =>
         employee.fullName.toLowerCase().includes(keyword),
       );
     }
@@ -39,20 +41,16 @@ export class EmployeesService {
   }
 
   async findById(id: string) {
-    const response: any = await this.oracleClient.get(
-      '/hcmRestApi/resources/latest/workers?limit=100',
-    );
+    const response = await this.oracleClient.get<
+      OracleCollectionResponse<OracleWorker>
+    >('/hcmRestApi/resources/latest/workers?limit=100');
 
     const employee = response.items.find(
-      (item: any) => item.PersonId === Number(id),
+      (item: OracleWorker) => item.PersonId === Number(id),
     );
 
     if (!employee) {
-      return {
-        success: false,
-        message: 'Employee not found',
-        data: null,
-      };
+      throw new NotFoundException('Employee not found');
     }
 
     return {

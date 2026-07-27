@@ -1,22 +1,12 @@
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  const config = new DocumentBuilder()
-    .setTitle('Oracle Fusion Integration Platform')
-    .setDescription('REST API for Oracle Fusion Integration')
-    .setVersion('1.0.0')
-    .addBearerAuth()
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-
-  SwaggerModule.setup('api', app, document);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -31,14 +21,27 @@ async function bootstrap() {
 
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  await app.listen(process.env.PORT ?? 3000);
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Oracle Fusion Integration Platform')
+    .setDescription(
+      'Enterprise REST API for Oracle Fusion Cloud Integration',
+    )
+    .setVersion('1.0.0')
+    .addBearerAuth()
+    .build();
 
-  console.log(
-    `Application running on http://localhost:${process.env.PORT ?? 3000}`,
-  );
-  console.log(
-    `Swagger available at http://localhost:${process.env.PORT ?? 3000}/api`,
-  );
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+
+  SwaggerModule.setup('api', app, document);
+
+  const port = process.env.PORT ?? 3000;
+
+  await app.listen(port);
+
+  const logger = new Logger('Bootstrap');
+
+  logger.log(`Application running on http://localhost:${port}`);
+  logger.log(`Swagger available at http://localhost:${port}/api`);
 }
 
 bootstrap();

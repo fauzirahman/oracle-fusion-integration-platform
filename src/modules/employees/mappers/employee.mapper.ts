@@ -1,9 +1,11 @@
+import { OracleWorker } from '../interfaces/oracle-worker.interface';
+
 export class EmployeeMapper {
-  static toResponse(employee: any) {
+  static toResponse(employee: OracleWorker) {
     return {
       id: employee.PersonId,
       employeeNumber: employee.PersonNumber,
-      fullName: employee.FullDisplayName,
+      fullName: employee.DisplayName,
       firstName: employee.FirstName,
       lastName: employee.LastName,
       department: employee.DepartmentName,
@@ -13,7 +15,7 @@ export class EmployeeMapper {
     };
   }
 
-  static toResponseList(items: any[]) {
+  static toResponseList(items: OracleWorker[]) {
     return items.map((item) => this.toResponse(item));
   }
 }
