@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Employee } from '@prisma/client';
+import { Employee, Prisma } from '@prisma/client';
 import { PrismaService } from '../../../database';
 
 @Injectable()
@@ -14,11 +14,33 @@ export class EmployeeRepository {
     });
   }
 
+  async findById(id: string): Promise<Employee | null> {
+    return this.prisma.employee.findUnique({
+      where: { id },
+    });
+  }
+
   async findByOracleId(oracleId: string): Promise<Employee | null> {
     return this.prisma.employee.findUnique({
       where: {
         oracleId,
       },
+    });
+  }
+
+  async create(data: Prisma.EmployeeCreateInput): Promise<Employee> {
+    return this.prisma.employee.create({
+      data,
+    });
+  }
+
+  async update(
+    id: string,
+    data: Prisma.EmployeeUpdateInput,
+  ): Promise<Employee> {
+    return this.prisma.employee.update({
+      where: { id },
+      data,
     });
   }
 
@@ -43,9 +65,7 @@ export class EmployeeRepository {
 
   async delete(id: string): Promise<Employee> {
     return this.prisma.employee.delete({
-      where: {
-        id,
-      },
+      where: { id },
     });
   }
 }
