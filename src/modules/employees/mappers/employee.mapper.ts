@@ -1,7 +1,7 @@
-import { OracleWorker } from '../interfaces/oracle-worker.interface';
+import { OracleEmployeeDto } from '../../oracle/dto/oracle-employee.dto';
 
 export class EmployeeMapper {
-  static toResponse(employee: OracleWorker) {
+  static toResponse(employee: OracleEmployeeDto) {
     return {
       id: employee.PersonId,
       employeeNumber: employee.PersonNumber,
@@ -15,7 +15,7 @@ export class EmployeeMapper {
     };
   }
 
-  static toResponseList(items: OracleWorker[]) {
+  static toResponseList(items: OracleEmployeeDto[]) {
     return items.map((item) => this.toResponse(item));
   }
 }

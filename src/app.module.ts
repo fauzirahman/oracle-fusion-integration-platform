@@ -9,9 +9,13 @@ import { OracleModule } from './modules/oracle/oracle.module';
 import { SystemModule } from './modules/system/system.module';
 import configuration from './config/configuration';
 import { EmployeesModule } from './modules/employees/employees.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { SyncModule } from './modules/sync/sync.module';
 
 @Module({
   imports: [
+    SyncModule,
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
