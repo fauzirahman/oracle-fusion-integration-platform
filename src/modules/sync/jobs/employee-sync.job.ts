@@ -14,6 +14,6 @@ export class EmployeeSyncJob {
   async handle() {
     this.logger.log('Running employee sync job');
 
-    await this.syncService.startEmployeeSync();
+    await this.syncService.syncEmployees();
   }
 }

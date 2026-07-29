@@ -1,21 +1,30 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+
+import { EmployeeSyncService } from './services/employee-sync.service';
+import { DepartmentSyncService } from './services/department-sync.service';
 
 @Injectable()
 export class SyncService {
-  private readonly logger = new Logger(SyncService.name);
+  constructor(
+    private readonly employeeSyncService: EmployeeSyncService,
+    private readonly departmentSyncService: DepartmentSyncService,
+  ) {}
 
-  async startEmployeeSync() {
-    this.logger.log('Employee synchronization started');
+  async syncEmployees() {
+    const total = await this.employeeSyncService.sync();
 
-    /**
-     * Flow:
-     *
-     * 1. Get employee from Oracle
-     * 2. Transform data
-     * 3. Save to PostgreSQL
-     *
-     */
+    return {
+      entity: 'employees',
+      synchronized: total,
+    };
+  }
 
-    this.logger.log('Employee synchronization finished');
+  async syncDepartments() {
+    const total = await this.departmentSyncService.sync();
+
+    return {
+      entity: 'departments',
+      synchronized: total,
+    };
   }
 }
