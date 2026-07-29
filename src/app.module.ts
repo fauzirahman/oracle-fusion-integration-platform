@@ -11,7 +11,8 @@ import configuration from './config/configuration';
 import { EmployeesModule } from './modules/employees/employees.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SyncModule } from './modules/sync/sync.module';
-import { DepartmentsModule } from './modules/departments/departments.module';
+import { DepartmentsModule } from './modules/departements/departments.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({

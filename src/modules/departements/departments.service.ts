@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { DepartmentMapper } from './mappers/department.mapper';
-import { DepartmentRepository } from './repositories/departments.repository';
+import { DepartmentRepository } from './repositories/department.repository';
 
 @Injectable()
 export class DepartmentsService {

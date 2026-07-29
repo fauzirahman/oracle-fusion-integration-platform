@@ -5,9 +5,10 @@ import { EmployeeSyncJob } from './jobs/employee-sync.job';
 
 import { OracleModule } from '../oracle/oracle.module';
 import { PrismaModule } from '../../database/prisma.module';
+import { DepartmentSyncService } from './services/department-sync.service';
 
 @Module({
   imports: [OracleModule, PrismaModule],
-  providers: [SyncService, EmployeeSyncJob],
+  providers: [SyncService, EmployeeSyncJob, DepartmentSyncService],
 })
 export class SyncModule {}
