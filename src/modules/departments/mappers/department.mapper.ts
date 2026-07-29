@@ -1,14 +1,26 @@
+import { Injectable } from '@nestjs/common';
+import { Department } from '@prisma/client';
+import { DepartmentResponseDto } from '../dto/department-response.dto';
+
+@Injectable()
 export class DepartmentMapper {
-  static toResponse(department: any) {
+  toResponse(
+    department: Department,
+  ): DepartmentResponseDto {
     return {
-      id: department.DepartmentId,
-      name: department.DepartmentName,
-      manager: department.ManagerName,
-      location: department.LocationName,
+      id: department.id,
+      oracleId: department.oracleId,
+      name: department.name,
+      code: department.code,
+      managerId: department.managerId,
     };
   }
 
-  static toResponseList(items: any[]) {
-    return items.map((item) => this.toResponse(item));
+  toResponseList(
+    departments: Department[],
+  ): DepartmentResponseDto[] {
+    return departments.map((department) =>
+      this.toResponse(department),
+    );
   }
 }

@@ -11,21 +11,27 @@ import configuration from './config/configuration';
 import { EmployeesModule } from './modules/employees/employees.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SyncModule } from './modules/sync/sync.module';
-
+import { DepartmentsModule } from './modules/departments/departments.module';
 @Module({
   imports: [
-    SyncModule,
-    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
       validationSchema,
     }),
+
+    ScheduleModule.forRoot(),
+
     PrismaModule,
-    HealthModule,
+
     OracleModule,
+
+    HealthModule,
     SystemModule,
+
     EmployeesModule,
+    DepartmentsModule,
+    SyncModule,
   ],
   controllers: [AppController],
 })
