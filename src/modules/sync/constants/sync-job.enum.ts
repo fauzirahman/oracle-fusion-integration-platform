@@ -1,0 +1,7 @@
+export enum SyncJob {
+  EMPLOYEE = 'EMPLOYEE',
+  DEPARTMENT = 'DEPARTMENT',
+  SUPPLIER = 'SUPPLIER',
+  JOB = 'JOB',
+  POSITION = 'POSITION',
+}

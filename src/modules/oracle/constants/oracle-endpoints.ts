@@ -6,4 +6,6 @@ export const OracleEndpoints = {
   LOCATIONS: '/hcmRestApi/resources/latest/locations',
 
   JOBS: '/hcmRestApi/resources/latest/jobs',
+
+  SUPPLIERS: '/fscmRestApi/resources/latest/suppliers',
 };

@@ -24,15 +24,15 @@ export class EmployeeQueryMapper {
     }
 
     if (query.personNumber) {
-      builder.where('PersonNumber', query.personNumber);
+      builder.where(`PersonNumber='${query.personNumber}'`);
     }
 
     if (query.email) {
-      builder.where('WorkEmail', query.email);
+      builder.where(`WorkEmail='${query.email}'`);
     }
 
     if (query.search) {
-      builder.where('DisplayName', query.search);
+      builder.where(`DisplayName LIKE '%${query.search}%'`);
     }
 
     return builder;

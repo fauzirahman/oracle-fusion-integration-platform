@@ -1,17 +1,16 @@
 export class OracleQueryBuilder {
   private readonly params = new URLSearchParams();
-  private readonly filters: string[] = [];
 
   /**
    * onlyData=true
    */
-  onlyData(): this {
-    this.params.set('onlyData', 'true');
+  onlyData(enabled = true): this {
+    this.params.set('onlyData', String(enabled));
     return this;
   }
 
   /**
-   * limit=25
+   * limit
    */
   limit(limit: number): this {
     this.params.set('limit', String(limit));
@@ -19,7 +18,7 @@ export class OracleQueryBuilder {
   }
 
   /**
-   * offset=0
+   * offset
    */
   offset(offset: number): this {
     this.params.set('offset', String(offset));
@@ -27,7 +26,15 @@ export class OracleQueryBuilder {
   }
 
   /**
-   * fields=PersonNumber,DisplayName
+   * q=
+   */
+  where(expression: string): this {
+    this.params.set('q', expression);
+    return this;
+  }
+
+  /**
+   * fields=a,b,c
    */
   fields(...fields: string[]): this {
     if (fields.length > 0) {
@@ -38,21 +45,13 @@ export class OracleQueryBuilder {
   }
 
   /**
-   * expand=assignments,managers
+   * expand=child1,child2
    */
-  expand(...expand: string[]): this {
-    if (expand.length > 0) {
-      this.params.set('expand', expand.join(','));
+  expand(...resources: string[]): this {
+    if (resources.length > 0) {
+      this.params.set('expand', resources.join(','));
     }
 
-    return this;
-  }
-
-  /**
-   * q=PersonNumber='100001'
-   */
-  where(field: string, value: string | number): this {
-    this.filters.push(`${field}='${value}'`);
     return this;
   }
 
@@ -65,14 +64,6 @@ export class OracleQueryBuilder {
   }
 
   /**
-   * finder=findByPersonNumber;PersonNumber=100001
-   */
-  finder(value: string): this {
-    this.params.set('finder', value);
-    return this;
-  }
-
-  /**
    * totalResults=true
    */
   totalResults(enabled = true): this {
@@ -81,15 +72,34 @@ export class OracleQueryBuilder {
   }
 
   /**
-   * Generate query string
+   * links=self,canonical
    */
-  build(): string {
-    if (this.filters.length > 0) {
-      this.params.set('q', this.filters.join(';'));
+  links(...links: string[]): this {
+    if (links.length > 0) {
+      this.params.set('links', links.join(','));
     }
 
+    return this;
+  }
+
+  /**
+   * arbitrary query parameter
+   */
+  parameter(name: string, value: string | number | boolean): this {
+    this.params.set(name, String(value));
+    return this;
+  }
+
+  /**
+   * Build query string.
+   */
+  build(): string {
     const query = this.params.toString();
 
-    return query ? `?${query}` : '';
+    if (!query) {
+      return '';
+    }
+
+    return `?${query}`;
   }
 }

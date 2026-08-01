@@ -1,22 +1,43 @@
 import { Controller, Get } from '@nestjs/common';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+
 import { HealthService } from './health.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Health')
 @Controller('health')
 export class HealthController {
-  constructor(private readonly healthService: HealthService) {}
+  constructor(
+    private readonly healthService: HealthService,
+  ) {}
 
   @Get()
   @ApiOperation({
-    summary: 'Check application health',
+    summary: 'Application health status',
   })
-  @ApiResponse({
-    status: 200,
-    description: 'Application is healthy',
+  @ApiOkResponse({
+    description: 'Application health information.',
   })
-  @Get()
-  check() {
-    return this.healthService.check();
+  health() {
+    return this.healthService.health();
+  }
+
+  @Get('database')
+  @ApiOperation({
+    summary: 'Database health',
+  })
+  database() {
+    return this.healthService.database();
+  }
+
+  @Get('oracle')
+  @ApiOperation({
+    summary: 'Oracle Fusion health',
+  })
+  oracle() {
+    return this.healthService.oracle();
   }
 }

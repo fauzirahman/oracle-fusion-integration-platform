@@ -1,0 +1,2 @@
+-- CreateEnum
+CREATE TYPE "SyncOperation" AS ENUM ('FULL', 'INCREMENTAL', 'MANUAL', 'SCHEDULED');

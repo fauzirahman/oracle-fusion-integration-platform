@@ -1,38 +1,32 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { EmployeeQueryDto } from './dto/employee-query.dto';
 import { EmployeeMapper } from './mappers/employee.mapper';
-import type { EmployeeProvider } from './interfaces/employee-provider.interface';
-import { EMPLOYEE_PROVIDER } from './tokens/employee-provider.token';
+import { EmployeeRepository } from './repositories/employee.repository';
+import { EmployeeQueryDto } from './dto/employee-query.dto';
 
 @Injectable()
 export class EmployeesService {
-  constructor(
-    @Inject(EMPLOYEE_PROVIDER)
-    private readonly employeeProvider: EmployeeProvider,
-  ) {}
+  constructor(private readonly repository: EmployeeRepository) {}
 
-  async findAll(query: EmployeeQueryDto) {
-    const response = await this.employeeProvider.find(query);
+  async findAll(query?: EmployeeQueryDto) {
+    const employees = await this.repository.findAll();
 
-    const employees = EmployeeMapper.toResponseList(response.items);
+    const data = EmployeeMapper.toResponseList(employees);
 
     return {
       success: true,
       message: 'Employees retrieved successfully',
-      data: employees,
+      data,
       meta: {
-        total: response.totalResults ?? employees.length,
-
-        limit: query.limit ?? 25,
-
-        offset: query.offset ?? 0,
+        total: data.length,
+        limit: query?.limit ?? data.length,
+        offset: query?.offset ?? 0,
       },
     };
   }
 
   async findById(id: string) {
-    const employee = await this.employeeProvider.findByPersonNumber(id);
+    const employee = await this.repository.findById(id);
 
     if (!employee) {
       throw new NotFoundException('Employee not found');

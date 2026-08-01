@@ -1,3 +1,5 @@
+import { OracleCollection } from '../interfaces/oracle-collection.interface';
+
 export interface OracleEmployeeDto {
   PersonId: number;
 
@@ -17,3 +19,5 @@ export interface OracleEmployeeDto {
 
   WorkEmail?: string;
 }
+
+export type OracleEmployeeCollectionDto = OracleCollection<OracleEmployeeDto>;

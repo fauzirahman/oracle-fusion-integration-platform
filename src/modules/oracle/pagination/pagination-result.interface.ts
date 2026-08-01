@@ -8,4 +8,6 @@ export interface PaginationResult<T> {
   offset: number;
 
   limit: number;
+
+  totalResults?: number;
 }

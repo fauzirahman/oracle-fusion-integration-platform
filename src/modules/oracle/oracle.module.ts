@@ -5,32 +5,28 @@ import { OracleAuthService } from './auth/oracle-auth.service';
 import { OracleClientService } from './client/oracle-client.service';
 import { OracleErrorMapper } from './errors/oracle-error.mapper';
 import { OracleHttpLogger } from './logger/oracle-http.logger';
-import { OracleEmployeeService } from './services/oracle-employee.service';
-import { EMPLOYEE_PROVIDER } from '../employees/tokens/employee-provider.token';
 import { OraclePaginationService } from './pagination/oracle-pagination.service';
+import { OracleEmployeeProvider } from './providers/oracle-employee.provider';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
-  imports: [HttpModule],
+  imports: [HttpModule, CommonModule],
 
   providers: [
     OracleAuthService,
-    OracleClientService,
     OracleHttpLogger,
     OracleErrorMapper,
-
-    OracleEmployeeService,
+    OracleClientService,
     OraclePaginationService,
-    {
-      provide: EMPLOYEE_PROVIDER,
-      useExisting: OracleEmployeeService,
-    },
+
+    OracleEmployeeProvider,
   ],
 
   exports: [
     OracleClientService,
-    OracleEmployeeService,
-    EMPLOYEE_PROVIDER,
     OraclePaginationService,
+
+    OracleEmployeeProvider,
   ],
 })
 export class OracleModule {}

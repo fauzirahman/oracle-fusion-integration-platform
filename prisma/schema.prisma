@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model Employee {
   id             String   @id @default(uuid())
   oracleId       String   @unique
@@ -38,13 +39,93 @@ model Department {
 }
 
 model SyncLog {
+  id            String   @id @default(uuid())
+
+  entity        String
+  entityId      String?
+
+  operation     String
+
+  status        SyncStatus
+
+  totalRecords  Int      @default(0)
+
+  duration      Int?
+
+  message       String?
+
+  startedAt     DateTime
+  finishedAt    DateTime?
+
+  createdAt     DateTime @default(now())
+}
+
+enum SyncStatus {
+  RUNNING
+  SUCCESS
+  FAILED
+}
+
+model Supplier {
   id          String   @id @default(uuid())
-  entity      String
-  entityId    String?
-  action      String
+
+  oracleId    String   @unique
+
+  supplierNumber String?
+
+  supplierName String
+
+  taxNumber   String?
+
+  email       String?
+
+  phone       String?
+
   status      String
-  message     String?
-  startedAt   DateTime
-  finishedAt  DateTime?
+
+  syncedAt    DateTime?
+
   createdAt   DateTime @default(now())
+
+  updatedAt   DateTime @updatedAt
+}
+
+enum SyncOperation {
+  FULL
+  INCREMENTAL
+  MANUAL
+  SCHEDULED
+}
+
+model SyncCheckpoint {
+  id          String   @id @default(uuid())
+  jobName     String   @unique
+  lastSyncAt  DateTime
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SyncHistory {
+  id          String      @id @default(uuid())
+
+  jobName     String
+
+  startedAt   DateTime
+
+  finishedAt  DateTime
+
+  status      SyncStatus
+
+  total       Int
+  inserted    Int
+  updated     Int
+  failed      Int
+
+  errorMessage String?
+
+  createdAt DateTime @default(now())
+
+  @@index([jobName])
+  @@index([startedAt])
 }

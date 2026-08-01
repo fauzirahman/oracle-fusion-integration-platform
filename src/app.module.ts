@@ -11,7 +11,9 @@ import configuration from './config/configuration';
 import { EmployeesModule } from './modules/employees/employees.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SyncModule } from './modules/sync/sync.module';
-import { DepartmentsModule } from './modules/departements/departments.module';
+import { DepartmentsModule } from './modules/departments/departments.module';
+import { SuppliersModule } from './modules/suppliers/suppliers.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -21,18 +23,20 @@ import { DepartmentsModule } from './modules/departements/departments.module';
       validationSchema,
     }),
 
+    CommonModule,
+
     ScheduleModule.forRoot(),
 
     PrismaModule,
-
-    OracleModule,
-
+    
     HealthModule,
     SystemModule,
 
     EmployeesModule,
     DepartmentsModule,
-    SyncModule,
+    SuppliersModule,
+    SyncModule,  
+    OracleModule,  
   ],
   controllers: [AppController],
 })

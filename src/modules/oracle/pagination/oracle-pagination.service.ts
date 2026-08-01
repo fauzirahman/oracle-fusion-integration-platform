@@ -1,30 +1,59 @@
 import { Injectable } from '@nestjs/common';
-import { OracleClientService } from '../client/oracle-client.service';
+
 import { OracleCollection } from '../interfaces/oracle-collection.interface';
+
+export interface PaginationOptions {
+  /**
+   * Jumlah record yang diambil setiap request ke Oracle.
+   */
+  pageSize?: number;
+
+  /**
+   * Maksimum record yang akan dikumpulkan.
+   */
+  maxRecords?: number;
+}
 
 @Injectable()
 export class OraclePaginationService {
-  constructor(private readonly client: OracleClientService) {}
+  async fetchAll<T>(
+    loader: (limit: number, offset: number) => Promise<OracleCollection<T>>,
+    options: PaginationOptions = {},
+  ): Promise<T[]> {
+    const pageSize = options.pageSize ?? 500;
+    const maxRecords = options.maxRecords ?? Number.MAX_SAFE_INTEGER;
 
-  async getAll<T>(endpoint: string, limit = 100): Promise<T[]> {
+    const results: T[] = [];
+
     let offset = 0;
-
-    let results: T[] = [];
-
     let hasMore = true;
 
-    while (hasMore) {
-      const url = `${endpoint}?limit=${limit}&offset=${offset}`;
+    while (hasMore && results.length < maxRecords) {
+      const response = await loader(pageSize, offset);
 
-      const response = await this.client.get<OracleCollection<T>>(url);
+      const items = response.items ?? [];
 
-      results = [...results, ...response.items];
+      results.push(...items);
 
-      hasMore = response.hasMore ?? false;
+      offset += items.length;
 
-      offset += limit;
+      hasMore =
+        response.hasMore === true &&
+        items.length > 0 &&
+        results.length < maxRecords;
     }
 
-    return results;
+    return results.slice(0, maxRecords);
+  }
+
+  /**
+   * Backward compatibility
+   * Untuk provider yang masih menggunakan API collect()
+   */
+  async collect<T>(
+    loader: (limit: number, offset: number) => Promise<OracleCollection<T>>,
+    options: PaginationOptions = {},
+  ): Promise<T[]> {
+    return this.fetchAll(loader, options);
   }
 }

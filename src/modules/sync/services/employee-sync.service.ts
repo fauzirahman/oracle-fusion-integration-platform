@@ -1,44 +1,57 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { OracleEmployeeService } from '../../oracle/services/oracle-employee.service';
+import { GenericSyncProcessor } from '../../../common/sync/generic-sync.processor';
+
+import { EmployeeMapper } from '../../employees/mappers/employee.mapper';
 import { EmployeeRepository } from '../../employees/repositories/employee.repository';
+import { OracleEmployeeProvider } from '../../oracle/providers/oracle-employee.provider';
+
+import { SyncSummaryDto } from '../dto/sync-summary.dto';
+import { SyncEngineService } from './sync-engine.service';
+import { SyncLogRepository } from '../repositories/sync-log.repository';
 
 @Injectable()
 export class EmployeeSyncService {
-  private readonly logger = new Logger(EmployeeSyncService.name);
-
   constructor(
-    private readonly oracleEmployeeService: OracleEmployeeService,
+    private readonly oracleEmployeeProvider: OracleEmployeeProvider,
     private readonly employeeRepository: EmployeeRepository,
+    private readonly processor: GenericSyncProcessor,
+    private readonly syncEngine: SyncEngineService,
+    private readonly syncLogRepository: SyncLogRepository,
   ) {}
 
-  async sync(): Promise<number> {
-    this.logger.log('Starting employee synchronization...');
+  async sync(): Promise<SyncSummaryDto> {
+    return this.syncEngine.run(
+      {
+        entity: 'Employee',
+        operation: 'INCREMENTAL',
+      },
+      async () => {
+        const latestSync =
+          await this.syncLogRepository.latestSuccess('Employee');
 
-    const response = await this.oracleEmployeeService.find({
-      limit: 500,
-    });
+        let response;
 
-    const employees = response.items ?? [];
+        if (latestSync?.finishedAt) {
+          response = await this.oracleEmployeeProvider.findUpdatedSince(
+            latestSync.finishedAt,
+            {
+              limit: 500,
+            },
+          );
+        } else {
+          response = await this.oracleEmployeeProvider.find({
+            limit: 500,
+          });
+        }
 
-    for (const employee of employees) {
-      await this.employeeRepository.upsert({
-        oracleId: String(employee.PersonId),
-        employeeNumber: employee.PersonNumber,
-        firstName: employee.FirstName ?? '',
-        lastName: employee.LastName ?? '',
-        displayName: employee.DisplayName,
-        email: employee.WorkEmail ?? null,
-        jobTitle: employee.JobName ?? null,
-        status: 'ACTIVE',
-        syncedAt: new Date(),
-      });
-    }
-
-    this.logger.log(
-      `Employee synchronization completed (${employees.length} records).`,
+        return this.processor.execute({
+          items: response.items ?? [],
+          repository: this.employeeRepository,
+          mapper: EmployeeMapper.toEntity,
+          getOracleId: (employee) => String(employee.PersonId),
+        });
+      },
     );
-
-    return employees.length;
   }
 }

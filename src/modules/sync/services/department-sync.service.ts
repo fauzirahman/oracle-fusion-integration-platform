@@ -1,34 +1,41 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { OracleDepartmentProvider } from '../../departements/providers/oracle-department.provider';
-import { DepartmentRepository } from '../../departements/repositories/department.repository';
+import { Injectable } from '@nestjs/common';
+
+import { GenericSyncProcessor } from '../../../common/sync/generic-sync.processor';
+
+import { DepartmentMapper } from '../../departments/mappers/department.mapper';
+import { OracleDepartmentProvider } from '../../departments/providers/oracle-department.provider';
+import { DepartmentRepository } from '../../departments/repositories/department.repository';
+
+import { SyncSummaryDto } from '../dto/sync-summary.dto';
+import { SyncEngineService } from './sync-engine.service';
+
 @Injectable()
 export class DepartmentSyncService {
-  private readonly logger = new Logger(DepartmentSyncService.name);
-
   constructor(
-    private readonly oracleProvider: OracleDepartmentProvider,
+    private readonly oracleDepartmentProvider: OracleDepartmentProvider,
     private readonly repository: DepartmentRepository,
+    private readonly processor: GenericSyncProcessor,
+    private readonly syncEngine: SyncEngineService,
   ) {}
 
-  async sync(): Promise<number> {
-    const departments = await this.oracleProvider.findAll();
+  async sync(): Promise<SyncSummaryDto> {
+    return this.syncEngine.run(
+      {
+        entity: 'Department',
+        operation: 'FULL',
+      },
+      async () => {
+        const departments =
+          await this.oracleDepartmentProvider.findAll();
 
-    this.logger.log(`Found ${departments.length} departments from Oracle`);
-
-    for (const item of departments) {
-      await this.repository.upsert({
-        oracleId: String(item.OrganizationId),
-
-        name: item.Name,
-
-        code: item.OrganizationCode ?? null,
-
-        managerId: item.ManagerId ? String(item.ManagerId) : null,
-      });
-    }
-
-    this.logger.log(`Synchronized ${departments.length} departments`);
-
-    return departments.length;
+        return this.processor.execute({
+          items: departments,
+          repository: this.repository,
+          mapper: DepartmentMapper.toEntity,
+          getOracleId: (department) =>
+            String(department.OrganizationId),
+        });
+      },
+    );
   }
 }

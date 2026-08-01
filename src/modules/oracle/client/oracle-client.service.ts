@@ -1,12 +1,17 @@
-import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { AxiosRequestConfig, Method } from 'axios';
 import { firstValueFrom } from 'rxjs';
-import { OracleAuthService } from '../auth/oracle-auth.service';
+
 import workers from '../../../mocks/workers.json';
-import { OracleHttpLogger } from '../logger/oracle-http.logger';
+
+import { OracleAuthService } from '../auth/oracle-auth.service';
 import { OracleErrorMapper } from '../errors/oracle-error.mapper';
+import { OracleHttpLogger } from '../logger/oracle-http.logger';
+
+import { RetryPolicyService } from '../../../common/retry/retry-policy.service';
+import { CircuitBreakerService } from '../../../common/resilience/circuit-breaker.service';
 
 @Injectable()
 export class OracleClientService {
@@ -18,6 +23,8 @@ export class OracleClientService {
     private readonly config: ConfigService,
     private readonly httpLogger: OracleHttpLogger,
     private readonly errorMapper: OracleErrorMapper,
+    private readonly retryPolicy: RetryPolicyService,
+    private readonly circuitBreaker: CircuitBreakerService,
   ) {}
 
   private isMock(): boolean {
@@ -45,55 +52,64 @@ export class OracleClientService {
       this.httpLogger.success({
         method,
         url: path,
-        duration: 0,
         statusCode: 200,
+        duration: 0,
       });
 
       return this.getMockData(path);
     }
 
-    const url = this.auth.buildUrl(path);
-    const startTime = Date.now();
+    return this.circuitBreaker.execute(() =>
+      this.retryPolicy.execute(
+        async () => {
+          const url = this.auth.buildUrl(path);
+          const startedAt = Date.now();
 
-    try {
-      const response = await firstValueFrom(
-        this.http.request<T>({
-          method,
-          url,
-          headers: this.auth.getHeaders(),
-          data,
-          timeout: 30000,
-          ...config,
-        }),
-      );
+          try {
+            const response = await firstValueFrom(
+              this.http.request<T>({
+                method,
+                url,
+                headers: this.auth.getHeaders(),
+                timeout: 30000,
+                data,
+                ...config,
+              }),
+            );
 
-      const duration = Date.now() - startTime;
+            const duration = Date.now() - startedAt;
 
-      this.httpLogger.success({
-        method,
-        url,
-        statusCode: response.status,
-        duration,
-        requestId: this.getRequestId(response.headers),
-        payload: this.sanitizePayload(data),
-      });
+            this.httpLogger.success({
+              method,
+              url,
+              statusCode: response.status,
+              duration,
+              requestId: this.getRequestId(response.headers),
+              payload: this.sanitizePayload(data),
+            });
 
-      return response.data;
-    } catch (error: any) {
-      const duration = Date.now() - startTime;
+            return response.data;
+          } catch (error: any) {
+            const duration = Date.now() - startedAt;
 
-      this.httpLogger.error({
-        method,
-        url,
-        statusCode: error.response?.status,
-        duration,
-        requestId: this.getRequestId(error.response?.headers),
-        payload: this.sanitizePayload(data),
-        error: error.response?.data ?? error.message,
-      });
+            this.httpLogger.error({
+              method,
+              url,
+              statusCode: error.response?.status,
+              duration,
+              requestId: this.getRequestId(error.response?.headers),
+              payload: this.sanitizePayload(data),
+              error: error.response?.data ?? error.message,
+            });
 
-      throw this.errorMapper.map(error);
-    }
+            throw this.errorMapper.map(error);
+          }
+        },
+        {
+          shouldRetry: (error) => this.shouldRetry(error),
+        },
+      ),
+    );
   }
 
   async get<T>(path: string, config?: AxiosRequestConfig): Promise<T> {
@@ -116,6 +132,14 @@ export class OracleClientService {
     return this.request<T>('PATCH', path, body, config);
   }
 
+  async put<T>(
+    path: string,
+    body: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<T> {
+    return this.request<T>('PUT', path, body, config);
+  }
+
   async delete<T>(path: string, config?: AxiosRequestConfig): Promise<T> {
     return this.request<T>('DELETE', path, undefined, config);
   }
@@ -125,11 +149,14 @@ export class OracleClientService {
       return payload;
     }
 
-    const clone = { ...(payload as Record<string, unknown>) };
+    const clone = {
+      ...(payload as Record<string, unknown>),
+    };
 
     delete clone.password;
     delete clone.client_secret;
     delete clone.access_token;
+    delete clone.refresh_token;
 
     return clone;
   }
@@ -146,12 +173,14 @@ export class OracleClientService {
   }
 
   private shouldRetry(error: any): boolean {
-    const status = error.response?.status;
+    const status = error?.response?.status;
 
-    return status === 429 || status === 502 || status === 503 || status === 504;
-  }
-
-  private async sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return (
+      status === 429 ||
+      status === 500 ||
+      status === 502 ||
+      status === 503 ||
+      status === 504
+    );
   }
 }
