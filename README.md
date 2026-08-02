@@ -566,7 +566,16 @@ Example response:
 
 ```json
 {
-  "status": "ok"
+  "status": "UP",
+  "timestamp": "2026-08-02T03:50:58.458Z",
+  "database": {
+    "status": "UP",
+    "responseTime": 21
+  },
+  "oracle": {
+    "status": "UP",
+    "responseTime": 5
+  }
 }
 ```
 
