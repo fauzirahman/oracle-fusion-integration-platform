@@ -9,6 +9,8 @@ import {
   OracleEmployeeDto,
 } from '../dto/oracle-employee.dto';
 
+import { OracleFilterBuilder } from '../query/oracle-filter.builder';
+
 @Injectable()
 export class OracleEmployeeProvider extends BaseOracleProvider<
   OracleEmployeeCollectionDto,
@@ -26,13 +28,17 @@ export class OracleEmployeeProvider extends BaseOracleProvider<
   async findByDepartment(
     department: string,
   ): Promise<OracleEmployeeCollectionDto> {
-    return this.search(`DepartmentName='${department}'`);
+    const filter = OracleFilterBuilder.equals('DepartmentName', department);
+
+    return this.search(filter);
   }
 
   async findByPersonNumber(
     personNumber: string,
   ): Promise<OracleEmployeeCollectionDto> {
-    return this.search(`PersonNumber='${personNumber}'`, {
+    const filter = OracleFilterBuilder.equals('PersonNumber', personNumber);
+
+    return this.search(filter, {
       limit: 1,
     });
   }

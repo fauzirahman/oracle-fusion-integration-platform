@@ -1,98 +1,326 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Oracle Fusion Integration Platform
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+> Enterprise-grade Oracle Fusion Integration Platform built with **NestJS**, **Prisma**, and **PostgreSQL**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Overview
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Oracle Fusion Integration Platform is a backend application designed to synchronize enterprise master data between **Oracle Fusion Cloud Applications** and a local database.
 
-## Project setup
+This project demonstrates how an enterprise integration service can be implemented using a clean, modular, and scalable architecture. Instead of acting as a simple CRUD application, it simulates a real-world Oracle Fusion integration service capable of retrieving data from Oracle REST APIs, transforming the payload, storing synchronized data locally, and exposing standardized REST APIs for downstream applications.
 
-```bash
-$ npm install
+The current implementation focuses on three master data domains:
+
+- Employees (HCM)
+- Departments (HCM)
+- Suppliers (Procurement)
+
+The platform also provides synchronization services, pagination, filtering, centralized logging, Swagger documentation, and an extensible architecture for future Oracle Fusion modules.
+
+---
+
+# Key Features
+
+## Oracle Fusion Integration
+
+- Oracle Fusion REST API Client
+- Basic Authentication Support
+- Configurable Oracle Environment
+- Oracle Pagination Support
+- Oracle Filter Builder
+- Generic Oracle Provider Architecture
+
+---
+
+## Synchronization Engine
+
+- Full Synchronization
+- Incremental Synchronization
+- Generic Sync Processor
+- Upsert Strategy
+- Synchronization Coordinator
+- Batch Processing
+- Pagination Support
+- Synchronization Logging
+
+---
+
+## REST API
+
+- Employees API
+- Departments API
+- Suppliers API
+- Synchronization API
+- Swagger / OpenAPI Documentation
+- Validation Pipe
+- Global Exception Filter
+
+---
+
+## Database
+
+- PostgreSQL
+- Prisma ORM
+- UUID Primary Keys
+- Automatic Timestamp
+- Migration Support
+
+---
+
+## Enterprise Features
+
+- Modular Architecture
+- Repository Pattern
+- Provider Pattern
+- Mapper Pattern
+- DTO Layer
+- Dependency Injection
+- Configuration Management
+- Environment Validation
+- HTTP Logging
+- Error Mapping
+
+---
+
+# Technology Stack
+
+| Layer | Technology |
+|--------|------------|
+| Runtime | Node.js |
+| Framework | NestJS |
+| Language | TypeScript |
+| ORM | Prisma |
+| Database | PostgreSQL |
+| Documentation | Swagger / OpenAPI |
+| Validation | class-validator |
+| HTTP Client | Axios |
+| Scheduler | @nestjs/schedule |
+| Logging | NestJS Logger |
+| Container | Docker |
+| Version Control | Git |
+
+---
+
+# Project Architecture
+
+```text
+                    +----------------------+
+                    |  Oracle Fusion Cloud |
+                    |    REST Services     |
+                    +----------+-----------+
+                               |
+                               |
+                     Oracle REST Client
+                               |
+                               |
+                +--------------v--------------+
+                | Oracle Integration Platform |
+                +--------------+--------------+
+                               |
+         +---------------------+---------------------+
+         |                     |                     |
+         |                     |                     |
++--------v-------+    +--------v-------+    +--------v-------+
+| Employees      |    | Departments    |    | Suppliers      |
+| Module         |    | Module         |    | Module         |
++--------+-------+    +--------+-------+    +--------+-------+
+         |                     |                     |
+         +---------------------+---------------------+
+                               |
+                      Synchronization Engine
+                               |
+                               |
+                      Generic Sync Processor
+                               |
+                               |
+                       Repository Layer
+                               |
+                               |
+                            Prisma ORM
+                               |
+                               |
+                         PostgreSQL Database
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+# High-Level Architecture
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```text
+src
+│
+├── common
+│   ├── dto
+│   ├── filters
+│   ├── interceptors
+│   ├── interfaces
+│   └── utils
+│
+├── config
+│
+├── database
+│
+├── modules
+│   ├── employees
+│   ├── departments
+│   ├── suppliers
+│   ├── oracle
+│   ├── sync
+│   ├── auth
+│   ├── health
+│   └── system
+│
+└── main.ts
 ```
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ npm run test
+# Module Overview
 
-# e2e tests
-$ npm run test:e2e
+## Oracle Module
 
-# test coverage
-$ npm run test:cov
+Responsible for communication with Oracle Fusion REST APIs.
+
+Components include:
+
+- Oracle Client
+- Authentication Service
+- Pagination Service
+- Query Builder
+- Filter Builder
+- Provider Layer
+- DTO Mapping
+
+---
+
+## Employees Module
+
+Provides employee APIs and synchronization support.
+
+Responsibilities:
+
+- Retrieve employees
+- Local employee repository
+- Mapping Oracle DTO
+- REST endpoints
+
+---
+
+## Departments Module
+
+Provides department management and synchronization.
+
+Responsibilities:
+
+- Department repository
+- Department mapping
+- Oracle provider
+- REST endpoints
+
+---
+
+## Suppliers Module
+
+Responsible for supplier synchronization.
+
+Responsibilities:
+
+- Supplier repository
+- Supplier mapper
+- Oracle supplier provider
+- REST API
+
+---
+
+## Synchronization Module
+
+Coordinates all synchronization jobs.
+
+Responsibilities:
+
+- Full Synchronization
+- Incremental Synchronization
+- Batch Processing
+- Logging
+- Generic Sync Processor
+- Synchronization Coordinator
+
+---
+
+# Design Principles
+
+This project follows several enterprise software engineering principles:
+
+- Clean Architecture
+- SOLID Principles
+- Separation of Concerns
+- Repository Pattern
+- Provider Pattern
+- Mapper Pattern
+- Dependency Injection
+- Single Responsibility Principle
+- Configuration by Environment
+- Extensible Module Design
+
+---
+
+# Current Features
+
+| Feature | Status |
+|----------|:------:|
+| Employee Synchronization | ✅ |
+| Department Synchronization | ✅ |
+| Supplier Synchronization | ✅ |
+| Oracle REST Client | ✅ |
+| Generic Oracle Provider | ✅ |
+| Oracle Pagination | ✅ |
+| Oracle Filter Builder | ✅ |
+| Generic Synchronization Engine | ✅ |
+| Incremental Synchronization | ✅ |
+| Scheduler Support | ✅ |
+| Prisma ORM | ✅ |
+| PostgreSQL | ✅ |
+| Swagger Documentation | ✅ |
+| Global Exception Filter | ✅ |
+| HTTP Logging | ✅ |
+| Docker Support | ✅ |
+| Unit Testing | ⏳ Planned |
+| CI/CD Pipeline | ⏳ Planned |
+
+---
+
+# Repository Structure
+
+```text
+oracle-fusion-integration-platform
+│
+├── docs
+├── prisma
+├── src
+├── test
+├── docker
+├── .env.example
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+# Project Goals
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+The primary objective of this project is to demonstrate enterprise backend development skills for Oracle Fusion integrations, including:
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+- Oracle Fusion REST API Integration
+- Enterprise Backend Architecture
+- Synchronization Engine Design
+- Data Transformation
+- Repository Pattern
+- Prisma ORM
+- PostgreSQL Integration
+- REST API Development
+- Enterprise Logging
+- Scalable Module Design
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is intended as both a learning resource and a professional portfolio showcasing modern backend engineering practices in the Oracle Fusion ecosystem.

@@ -1,68 +1,103 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { DatabaseLockService } from '../../../database/database-lock.service';
+
 import { SyncSummaryDto } from '../dto/sync-summary.dto';
-import { EmployeeSyncService } from './employee-sync.service';
+
 import { DepartmentSyncService } from './department-sync.service';
+import { EmployeeSyncService } from './employee-sync.service';
 import { SupplierSyncService } from './supplier-sync.service';
 
 @Injectable()
 export class SyncCoordinatorService {
-  private readonly logger = new Logger(
-    SyncCoordinatorService.name,
-  );
+  private readonly logger = new Logger(SyncCoordinatorService.name);
 
   constructor(
+    private readonly lockService: DatabaseLockService,
+
     private readonly employeeSyncService: EmployeeSyncService,
+
     private readonly departmentSyncService: DepartmentSyncService,
+
     private readonly supplierSyncService: SupplierSyncService,
   ) {}
 
   async syncEmployees(): Promise<SyncSummaryDto> {
-    return this.employeeSyncService.sync();
+    return this.lockService.executeWithLock('employee-sync', async () => {
+      this.logger.log('Employee synchronization started');
+
+      const result = await this.employeeSyncService.sync();
+
+      this.logger.log('Employee synchronization completed');
+
+      return result;
+    });
   }
 
   async syncDepartments(): Promise<SyncSummaryDto> {
-    return this.departmentSyncService.sync();
+    return this.lockService.executeWithLock('department-sync', async () => {
+      this.logger.log('Department synchronization started');
+
+      const result = await this.departmentSyncService.sync();
+
+      this.logger.log('Department synchronization completed');
+
+      return result;
+    });
   }
 
   async syncSuppliers(): Promise<SyncSummaryDto> {
-    return this.supplierSyncService.sync();
+    return this.lockService.executeWithLock('supplier-sync', async () => {
+      this.logger.log('Supplier synchronization started');
+
+      const result = await this.supplierSyncService.sync();
+
+      this.logger.log('Supplier synchronization completed');
+
+      return result;
+    });
   }
 
   /**
-   * Run synchronization sequentially.
+   * Sequential synchronization.
    *
-   * Department → Employee → Supplier
-   *
-   * Department biasanya menjadi referensi
-   * untuk Employee.
+   * Department
+   * ↓
+   * Employee
+   * ↓
+   * Supplier
    */
   async syncAllSequential(): Promise<void> {
-    this.logger.log('Starting sequential synchronization');
+    await this.lockService.executeWithLock('full-sync', async () => {
+      this.logger.log('Sequential synchronization started');
 
-    await this.departmentSyncService.sync();
+      await this.departmentSyncService.sync();
 
-    await this.employeeSyncService.sync();
+      await this.employeeSyncService.sync();
 
-    await this.supplierSyncService.sync();
+      await this.supplierSyncService.sync();
 
-    this.logger.log('Sequential synchronization completed');
+      this.logger.log('Sequential synchronization completed');
+    });
   }
 
   /**
-   * Run synchronization in parallel.
+   * Parallel synchronization.
    *
-   * Gunakan jika tidak ada dependency antar entity.
+   * Gunakan hanya jika entity
+   * tidak saling bergantung.
    */
   async syncAllParallel(): Promise<void> {
-    this.logger.log('Starting parallel synchronization');
+    await this.lockService.executeWithLock('full-sync', async () => {
+      this.logger.log('Parallel synchronization started');
 
-    await Promise.all([
-      this.employeeSyncService.sync(),
-      this.departmentSyncService.sync(),
-      this.supplierSyncService.sync(),
-    ]);
+      await Promise.all([
+        this.employeeSyncService.sync(),
+        this.departmentSyncService.sync(),
+        this.supplierSyncService.sync(),
+      ]);
 
-    this.logger.log('Parallel synchronization completed');
+      this.logger.log('Parallel synchronization completed');
+    });
   }
 }

@@ -3,27 +3,15 @@ import { Module } from '@nestjs/common';
 import { PrismaModule } from '../../database/prisma.module';
 import { OracleModule } from '../oracle/oracle.module';
 
-import { SuppliersController } from './suppliers.controller';
-
+import { SuppliersController } from './controller/suppliers.controller';
 import { SupplierRepository } from './repositories/supplier.repository';
-import { OracleSupplierProvider } from './providers/oracle-supplier.provider';
 import { SuppliersService } from './suppliers.service';
-import { SupplierMapper } from './mappers/supplier.mapper';
+import { OracleSupplierProvider } from './providers/oracle-supplier.provider';
 
 @Module({
   imports: [PrismaModule, OracleModule],
   controllers: [SuppliersController],
-  providers: [
-    SuppliersService,
-    SupplierRepository,
-    SupplierMapper,
-    OracleSupplierProvider,
-  ],
-   exports: [
-    SuppliersService,
-    SupplierRepository,
-    SupplierMapper,
-    OracleSupplierProvider,
-  ],
+  providers: [SuppliersService, SupplierRepository, OracleSupplierProvider],
+  exports: [SuppliersService, SupplierRepository, OracleSupplierProvider],
 })
 export class SuppliersModule {}
