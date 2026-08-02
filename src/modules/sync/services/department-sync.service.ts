@@ -25,15 +25,13 @@ export class DepartmentSyncService {
         operation: 'FULL',
       },
       async () => {
-        const departments =
-          await this.oracleDepartmentProvider.findAll();
+        const departments = await this.oracleDepartmentProvider.findAll();
 
         return this.processor.execute({
           items: departments,
           repository: this.repository,
           mapper: DepartmentMapper.toEntity,
-          getOracleId: (department) =>
-            String(department.OrganizationId),
+          getOracleId: (department) => String(department.OrganizationId),
         });
       },
     );

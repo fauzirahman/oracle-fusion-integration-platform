@@ -7,15 +7,9 @@ export interface BatchProcessorOptions<T> {
 
   onBatchStart?: (batchNumber: number, batch: T[]) => Promise<void> | void;
 
-  onBatchComplete?: (
-    batchNumber: number,
-    batch: T[],
-  ) => Promise<void> | void;
+  onBatchComplete?: (batchNumber: number, batch: T[]) => Promise<void> | void;
 
-  onError?: (
-    error: unknown,
-    item: T,
-  ) => Promise<void> | void;
+  onError?: (error: unknown, item: T) => Promise<void> | void;
 }
 
 export interface BatchProcessorResult {
@@ -31,10 +25,7 @@ export interface BatchProcessorResult {
 }
 
 export class BatchProcessor {
-  static split<T>(
-    items: T[],
-    batchSize = 100,
-  ): T[][] {
+  static split<T>(items: T[], batchSize = 100): T[][] {
     if (batchSize <= 0) {
       throw new Error('batchSize must be greater than zero');
     }

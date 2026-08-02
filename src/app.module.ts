@@ -28,15 +28,15 @@ import { CommonModule } from './common/common.module';
     ScheduleModule.forRoot(),
 
     PrismaModule,
-    
+
     HealthModule,
     SystemModule,
 
     EmployeesModule,
     DepartmentsModule,
     SuppliersModule,
-    SyncModule,  
-    OracleModule,  
+    SyncModule,
+    OracleModule,
   ],
   controllers: [AppController],
 })

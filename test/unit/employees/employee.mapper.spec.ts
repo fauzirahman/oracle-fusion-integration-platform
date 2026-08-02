@@ -62,7 +62,7 @@ describe('EmployeeMapper', () => {
 
   describe('toResponse()', () => {
     it('should map Employee entity to response object', () => {
-      const response = EmployeeMapper.toResponse(employeeEntity as Employee);
+      const response = EmployeeMapper.toResponse(employeeEntity);
 
       expect(response).toEqual({
         id: employeeEntity.id,

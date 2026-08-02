@@ -71,9 +71,7 @@ export class EmployeeRepository
     return this.prisma.employee.count();
   }
 
-  async create(
-    data: Prisma.EmployeeCreateInput,
-  ): Promise<Employee> {
+  async create(data: Prisma.EmployeeCreateInput): Promise<Employee> {
     return this.prisma.employee.create({
       data,
     });

@@ -20,9 +20,7 @@ export class DepartmentsService {
     const department = await this.repository.findById(id);
 
     if (!department) {
-      throw new NotFoundException(
-        `Department '${id}' not found`,
-      );
+      throw new NotFoundException(`Department '${id}' not found`);
     }
 
     return this.mapper.toResponse(department);

@@ -23,9 +23,7 @@ async function bootstrap() {
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Oracle Fusion Integration Platform')
-    .setDescription(
-      'Enterprise REST API for Oracle Fusion Cloud Integration',
-    )
+    .setDescription('Enterprise REST API for Oracle Fusion Cloud Integration')
     .setVersion('1.0.0')
     .addBearerAuth()
     .build();

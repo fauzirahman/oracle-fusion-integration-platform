@@ -37,10 +37,7 @@ export abstract class BaseSyncService {
   /**
    * Mark a failed record.
    */
-  protected failed(
-    summary: SyncSummaryDto,
-    error?: unknown,
-  ): void {
+  protected failed(summary: SyncSummaryDto, error?: unknown): void {
     summary.failed++;
     summary.total++;
 
@@ -66,12 +63,8 @@ export abstract class BaseSyncService {
   /**
    * Finish synchronization.
    */
-  protected finish(
-    startedAt: number,
-    summary: SyncSummaryDto,
-  ): SyncSummaryDto {
-    summary.durationMs =
-      Date.now() - startedAt;
+  protected finish(startedAt: number, summary: SyncSummaryDto): SyncSummaryDto {
+    summary.durationMs = Date.now() - startedAt;
 
     this.logger.log(
       [

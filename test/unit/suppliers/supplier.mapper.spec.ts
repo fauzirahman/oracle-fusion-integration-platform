@@ -89,7 +89,7 @@ describe('SupplierMapper', () => {
 
   describe('toResponse()', () => {
     it('should map Supplier entity to response dto', () => {
-      const response = SupplierMapper.toResponse(supplierEntity as Supplier);
+      const response = SupplierMapper.toResponse(supplierEntity);
 
       expect(response).toEqual({
         id: supplierEntity.id,
@@ -116,7 +116,7 @@ describe('SupplierMapper', () => {
         email: null,
         phone: null,
         status: null,
-      } as Supplier);
+      });
 
       expect(response.supplierNumber).toBeUndefined();
 

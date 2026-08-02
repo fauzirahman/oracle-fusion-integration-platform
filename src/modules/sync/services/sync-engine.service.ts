@@ -13,9 +13,7 @@ export interface SyncEngineOptions {
 export class SyncEngineService {
   private readonly logger = new Logger(SyncEngineService.name);
 
-  constructor(
-    private readonly syncLogRepository: SyncLogRepository,
-  ) {}
+  constructor(private readonly syncLogRepository: SyncLogRepository) {}
 
   async run(
     options: SyncEngineOptions,
@@ -23,9 +21,7 @@ export class SyncEngineService {
   ): Promise<SyncSummaryDto> {
     const startedAt = Date.now();
 
-    this.logger.log(
-      `[${options.entity}] synchronization started.`,
-    );
+    this.logger.log(`[${options.entity}] synchronization started.`);
 
     const log = await this.syncLogRepository.createStart(
       options.entity,

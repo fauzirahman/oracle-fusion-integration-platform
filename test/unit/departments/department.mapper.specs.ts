@@ -57,7 +57,7 @@ describe('DepartmentMapper', () => {
 
   describe('toResponse()', () => {
     it('should map Department entity to response dto', () => {
-      const response = mapper.toResponse(departmentEntity as Department);
+      const response = mapper.toResponse(departmentEntity);
 
       expect(response).toEqual({
         id: departmentEntity.id,

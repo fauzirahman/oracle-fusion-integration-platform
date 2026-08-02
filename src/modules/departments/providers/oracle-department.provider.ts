@@ -11,10 +11,7 @@ export class OracleDepartmentProvider {
   constructor(private readonly oracleClient: OracleClientService) {}
 
   async findAll(): Promise<OracleDepartmentDto[]> {
-    const query = new OracleQueryBuilder()
-      .onlyData()
-      .limit(500)
-      .build();
+    const query = new OracleQueryBuilder().onlyData().limit(500).build();
 
     const response = await this.oracleClient.get<
       OracleCollection<OracleDepartmentDto>

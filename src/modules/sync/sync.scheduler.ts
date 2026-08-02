@@ -7,9 +7,7 @@ import { EmployeeSyncService } from './services/employee-sync.service';
 export class SyncScheduler {
   private readonly logger = new Logger(SyncScheduler.name);
 
-  constructor(
-    private readonly employeeSyncService: EmployeeSyncService,
-  ) {}
+  constructor(private readonly employeeSyncService: EmployeeSyncService) {}
 
   /**
    * Run every 15 minutes.
