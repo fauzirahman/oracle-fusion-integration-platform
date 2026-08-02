@@ -324,3 +324,267 @@ The primary objective of this project is to demonstrate enterprise backend devel
 - Scalable Module Design
 
 This project is intended as both a learning resource and a professional portfolio showcasing modern backend engineering practices in the Oracle Fusion ecosystem.
+
+# Installation
+
+## Prerequisites
+
+Before running this project, make sure you have the following software installed:
+
+| Software | Version |
+|----------|---------|
+| Node.js | 20.x or later |
+| npm | 10.x or later |
+| PostgreSQL | 15+ |
+| Git | Latest |
+| Docker | Optional |
+
+You can verify your installation by running:
+
+```bash
+node -v
+npm -v
+git --version
+```
+
+---
+
+## Clone Repository
+
+Clone this repository to your local machine.
+
+```bash
+git clone https://github.com/fauzirahman/oracle-fusion-integration-platform.git
+```
+
+Navigate to the project directory.
+
+```bash
+cd oracle-fusion-integration-platform
+```
+
+---
+
+## Install Dependencies
+
+Install all required Node.js packages.
+
+```bash
+npm install
+```
+
+Once the installation is complete, verify that NestJS dependencies have been installed successfully.
+
+```bash
+npm list --depth=0
+```
+
+---
+
+## Environment Variables
+
+Create a new environment file by copying the example configuration.
+
+```bash
+cp .env.example .env
+```
+
+Update the values in the `.env` file to match your environment.
+
+Example:
+
+```env
+####################################################
+# Application
+####################################################
+
+NODE_ENV=development
+PORT=3000
+
+####################################################
+# Database
+####################################################
+
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/oracle_integration?schema=public"
+
+####################################################
+# Oracle Fusion
+####################################################
+
+ORACLE_BASE_URL=https://your-instance.oraclecloud.com
+
+ORACLE_USERNAME=your_username
+
+ORACLE_PASSWORD=your_password
+
+####################################################
+# Synchronization
+####################################################
+
+SYNC_BATCH_SIZE=100
+
+SYNC_PAGE_SIZE=100
+
+####################################################
+# Logging
+####################################################
+
+LOG_LEVEL=debug
+```
+
+### Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| NODE_ENV | Application environment |
+| PORT | HTTP server port |
+| DATABASE_URL | PostgreSQL connection string |
+| ORACLE_BASE_URL | Oracle Fusion REST API base URL |
+| ORACLE_USERNAME | Oracle Fusion username |
+| ORACLE_PASSWORD | Oracle Fusion password |
+| SYNC_BATCH_SIZE | Number of records processed per synchronization batch |
+| SYNC_PAGE_SIZE | Number of records retrieved from Oracle Fusion per request |
+| LOG_LEVEL | Application logging level |
+
+> **Important**
+>
+> Never commit your actual `.env` file to version control. Only commit `.env.example`.
+
+---
+
+## Database Setup
+
+This project uses **PostgreSQL** as the primary database.
+
+Create a PostgreSQL database.
+
+Example:
+
+```sql
+CREATE DATABASE oracle_integration;
+```
+
+Verify the database connection by checking the `DATABASE_URL` value in your `.env` file.
+
+---
+
+## Prisma Setup
+
+Generate the Prisma Client.
+
+```bash
+npx prisma generate
+```
+
+Apply database migrations.
+
+```bash
+npx prisma migrate dev
+```
+
+For production environments, use:
+
+```bash
+npx prisma migrate deploy
+```
+
+To inspect your database visually, launch Prisma Studio.
+
+```bash
+npx prisma studio
+```
+
+---
+
+## Docker (Optional)
+
+If Docker is installed, you can start the required services using Docker Compose.
+
+```bash
+docker compose up -d
+```
+
+To stop all running containers:
+
+```bash
+docker compose down
+```
+
+> Docker is optional and primarily intended for local development environments.
+
+---
+
+## Running the Application
+
+Start the application in development mode.
+
+```bash
+npm run start:dev
+```
+
+Build the application for production.
+
+```bash
+npm run build
+```
+
+Run the production build.
+
+```bash
+npm run start:prod
+```
+
+By default, the application will be available at:
+
+```text
+http://localhost:3000
+```
+
+---
+
+## Swagger Documentation
+
+Once the application is running, Swagger UI can be accessed at:
+
+```text
+http://localhost:3000/api
+```
+
+Swagger provides interactive API documentation for all available endpoints.
+
+---
+
+## Health Check
+
+Verify that the application is running correctly.
+
+```http
+GET /health
+```
+
+Example response:
+
+```json
+{
+  "status": "ok"
+}
+```
+
+---
+
+## Useful Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm install` | Install project dependencies |
+| `npm run start:dev` | Start the application in development mode |
+| `npm run build` | Build the application |
+| `npm run start:prod` | Run the production build |
+| `npm run lint` | Run ESLint |
+| `npm run format` | Format source code |
+| `npx prisma generate` | Generate Prisma Client |
+| `npx prisma migrate dev` | Apply database migrations |
+| `npx prisma migrate deploy` | Apply production migrations |
+| `npx prisma studio` | Open Prisma Studio |
+| `docker compose up -d` | Start Docker services |
+| `docker compose down` | Stop Docker services |
