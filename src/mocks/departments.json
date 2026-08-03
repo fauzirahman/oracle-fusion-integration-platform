@@ -1,23 +1,32 @@
 {
-  "count": 3,
   "items": [
     {
-      "DepartmentId": 100,
-      "DepartmentName": "Information Technology",
-      "ManagerName": "John Smith",
-      "LocationName": "Jakarta"
+      "OrganizationId": 100,
+      "OrganizationCode": "IT",
+      "Name": "Information Technology",
+      "ManagerId": 1001
     },
     {
-      "DepartmentId": 200,
-      "DepartmentName": "Finance",
-      "ManagerName": "Sarah Johnson",
-      "LocationName": "Jakarta"
+      "OrganizationId": 200,
+      "OrganizationCode": "FIN",
+      "Name": "Finance",
+      "ManagerId": 1002
     },
     {
-      "DepartmentId": 300,
-      "DepartmentName": "Human Resources",
-      "ManagerName": "Michael Brown",
-      "LocationName": "Bandung"
+      "OrganizationId": 300,
+      "OrganizationCode": "HR",
+      "Name": "Human Resources",
+      "ManagerId": 1003
+    },
+    {
+      "OrganizationId": 400,
+      "OrganizationCode": "PROC",
+      "Name": "Procurement",
+      "ManagerId": 1004
     }
-  ]
+  ],
+  "count": 4,
+  "hasMore": false,
+  "limit": 500,
+  "offset": 0
 }

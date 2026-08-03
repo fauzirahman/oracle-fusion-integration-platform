@@ -1,12 +1,24 @@
 export interface OracleSupplierDto {
+  /**
+   * Oracle Supplier ID
+   */
   SupplierId: number;
 
-  SupplierNumber: string;
+  /**
+   * Supplier Number
+   */
+  SupplierNumber?: string;
 
   /**
-   * Supplier Name
+   * Supplier Name (Oracle Fusion)
    */
-  Supplier: string;
+  SupplierName: string;
+
+  /**
+   * Legacy field untuk kompatibilitas mock lama.
+   * Dapat dihapus setelah seluruh mock menggunakan SupplierName.
+   */
+  Supplier?: string;
 
   TaxpayerId?: string;
 

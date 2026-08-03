@@ -1,0 +1,32 @@
+{
+  "items": [
+    {
+      "SupplierId": 1,
+      "SupplierNumber": "SUP-001",
+      "SupplierName": "PT ABC Indonesia",
+      "TaxpayerId": "01.234.567.8-999.000",
+      "EmailAddress": "vendor1@example.com",
+      "Phone": "021111111"
+    },
+    {
+      "SupplierId": 2,
+      "SupplierNumber": "SUP-002",
+      "SupplierName": "PT XYZ Indonesia",
+      "TaxpayerId": "02.345.678.9-999.000",
+      "EmailAddress": "vendor2@example.com",
+      "Phone": "021222222"
+    },
+    {
+      "SupplierId": 3,
+      "SupplierNumber": "SUP-003",
+      "SupplierName": "PT Global Supplier",
+      "TaxpayerId": "03.456.789.0-999.000",
+      "EmailAddress": "vendor3@example.com",
+      "Phone": "021333333"
+    }
+  ],
+  "count": 3,
+  "hasMore": false,
+  "limit": 500,
+  "offset": 0
+}

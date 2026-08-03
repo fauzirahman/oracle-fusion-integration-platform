@@ -19,10 +19,6 @@ export class EmployeeQueryMapper {
       builder.fields(...query.fields);
     }
 
-    if (query.expand?.length) {
-      builder.expand(...query.expand);
-    }
-
     if (query.personNumber) {
       builder.where(`PersonNumber='${query.personNumber}'`);
     }

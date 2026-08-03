@@ -5,6 +5,8 @@ import { AxiosRequestConfig, Method } from 'axios';
 import { firstValueFrom } from 'rxjs';
 
 import workers from '../../../mocks/workers.json';
+import departments from '../../../mocks/departments.json';
+import suppliers from '../../../mocks/suppliers.json';
 
 import { OracleAuthService } from '../auth/oracle-auth.service';
 import { OracleErrorMapper } from '../errors/oracle-error.mapper';
@@ -32,8 +34,27 @@ export class OracleClientService {
   }
 
   private getMockData(path: string): any {
-    if (path.startsWith('/hcmRestApi/resources/latest/workers')) {
+    const normalizedPath = path.toLowerCase();
+
+    if (normalizedPath.startsWith('/hcmrestapi/resources/latest/workers')) {
+      this.logger.debug('Using mock Workers endpoint');
+
       return workers;
+    }
+
+    if (normalizedPath.startsWith('/hcmrestapi/resources/latest/departments')) {
+      this.logger.debug('Using mock Departments endpoint');
+
+      return departments;
+    }
+
+    if (
+      normalizedPath.startsWith('/fscmrestapi/resources/latest/suppliers') ||
+      normalizedPath.startsWith('/fscmrestapi/resources/11.13.18.05/suppliers')
+    ) {
+      this.logger.debug('Using mock Suppliers endpoint');
+
+      return suppliers;
     }
 
     throw new HttpException(

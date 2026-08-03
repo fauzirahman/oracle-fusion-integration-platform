@@ -40,7 +40,7 @@ export class SyncController {
   @ApiOperation({
     summary: 'Synchronize all Oracle Fusion master data',
   })
-  syncAll() {
-    return this.coordinator.syncAllSequential();
+  async syncAll() {
+    return this.coordinator.syncAllParallel();
   }
 }

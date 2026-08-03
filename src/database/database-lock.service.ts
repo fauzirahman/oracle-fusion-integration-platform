@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
+
 import { PrismaService } from './prisma.service';
 
 @Injectable()
@@ -23,7 +24,13 @@ export class DatabaseLockService {
 
     if (!acquired) {
       this.logger.warn(`Lock "${lockName}" is already acquired.`);
-      throw new Error(`Synchronization "${lockName}" is already running.`);
+
+      throw new ConflictException({
+        success: false,
+        statusCode: 409,
+        message: 'Synchronization is already running.',
+        lockName,
+      });
     }
 
     this.logger.log(`Lock acquired: ${lockName}`);

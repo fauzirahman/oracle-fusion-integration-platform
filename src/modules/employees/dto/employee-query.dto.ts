@@ -67,13 +67,4 @@ export class EmployeeQueryDto {
   @IsArray()
   @IsString({ each: true })
   fields?: string[];
-
-  @ApiPropertyOptional({
-    example: ['assignments'],
-    type: [String],
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  expand?: string[];
 }

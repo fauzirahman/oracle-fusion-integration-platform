@@ -15,7 +15,14 @@ export class SupplierMapper {
 
       supplierNumber: dto.SupplierNumber?.trim() ?? null,
 
-      supplierName: dto.Supplier.trim(),
+      /**
+       * Oracle Fusion dapat mengembalikan SupplierName.
+       * Tetap kompatibel apabila mock atau implementasi lama
+       * masih menggunakan field Supplier.
+       */
+      supplierName: String(
+        (dto.SupplierName ?? dto.Supplier ?? '').trim(),
+      ).trim(),
 
       taxNumber: dto.TaxpayerId?.trim() ?? null,
 
