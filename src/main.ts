@@ -11,7 +11,7 @@ async function bootstrap() {
   // CORS configuration
   const allowedOrigins = [
     'http://localhost:3000',
-    'https://oracle-fusion-integration-dashboard.vercel.app/',
+    'https://oracle-fusion-integration-platform-production-755e.up.railway.app',
   ];
 
   app.enableCors({
