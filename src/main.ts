@@ -1,18 +1,18 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Allow the React/Next.js dashboard to access the API.
+  // CORS configuration
   const allowedOrigins = [
     'http://localhost:3000',
-    process.env.FRONTEND_URL,
     'https://oracle-fusion-integration-dashboard-mlqm79i13-fauzi7.vercel.app',
-  ].filter((origin): origin is string => Boolean(origin));
+  ];
 
   app.enableCors({
     origin: allowedOrigins,
@@ -25,7 +25,11 @@ async function bootstrap() {
       'DELETE',
       'OPTIONS',
     ],
-    credentials: true,
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+    ],
+    credentials: false,
   });
 
   app.useGlobalPipes(
@@ -50,7 +54,10 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
 
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  const document = SwaggerModule.createDocument(
+    app,
+    swaggerConfig,
+  );
 
   SwaggerModule.setup('api', app, document);
 
@@ -60,8 +67,13 @@ async function bootstrap() {
 
   const logger = new Logger('Bootstrap');
 
-  logger.log(`Application running on http://localhost:${port}`);
-  logger.log(`Swagger available at http://localhost:${port}/api`);
+  logger.log(
+    `Application running on http://localhost:${port}`,
+  );
+
+  logger.log(
+    `Swagger available at http://localhost:${port}/api`,
+  );
 }
 
 bootstrap();
