@@ -11,6 +11,7 @@ async function bootstrap() {
   const allowedOrigins = [
     'http://localhost:3000',
     process.env.FRONTEND_URL,
+    'https://oracle-fusion-integration-dashboard-mlqm79i13-fauzi7.vercel.app',
   ].filter((origin): origin is string => Boolean(origin));
 
   app.enableCors({
