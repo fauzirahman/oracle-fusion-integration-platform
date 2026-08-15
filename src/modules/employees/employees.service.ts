@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { EmployeeMapper } from './mappers/employee.mapper';
-import { EmployeeRepository } from './repositories/employee.repository';
+import {
+  EmployeeFindAllOptions,
+  EmployeeRepository,
+} from './repositories/employee.repository';
 import { EmployeeQueryDto } from './dto/employee-query.dto';
 
 @Injectable()
@@ -9,7 +12,18 @@ export class EmployeesService {
   constructor(private readonly repository: EmployeeRepository) {}
 
   async findAll(query?: EmployeeQueryDto) {
-    const employees = await this.repository.findAll();
+    const options: EmployeeFindAllOptions = {
+      search: query?.search,
+      personNumber: query?.personNumber,
+      email: query?.email,
+      limit: query?.limit ?? 25,
+      offset: query?.offset ?? 0,
+    };
+
+    const [employees, total] = await Promise.all([
+      this.repository.findAll(options),
+      this.repository.count(options),
+    ]);
 
     const data = EmployeeMapper.toResponseList(employees);
 
@@ -18,9 +32,9 @@ export class EmployeesService {
       message: 'Employees retrieved successfully',
       data,
       meta: {
-        total: data.length,
-        limit: query?.limit ?? data.length,
-        offset: query?.offset ?? 0,
+        total,
+        limit: options.limit,
+        offset: options.offset,
       },
     };
   }

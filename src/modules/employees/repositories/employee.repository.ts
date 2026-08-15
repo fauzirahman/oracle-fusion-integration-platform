@@ -5,6 +5,14 @@ import { PrismaService } from '../../../database';
 import { PrismaRepository } from '../../../common/repositories/prisma.repository';
 import { SyncUpsertRepository } from '../../../common/sync/sync-upsert.repository';
 
+export interface EmployeeFindAllOptions {
+  search?: string;
+  personNumber?: string;
+  email?: string;
+  limit?: number;
+  offset?: number;
+}
+
 @Injectable()
 export class EmployeeRepository
   extends PrismaRepository
@@ -14,11 +22,140 @@ export class EmployeeRepository
     super(prisma);
   }
 
-  async findAll(): Promise<Employee[]> {
+  async findAll(
+    options: EmployeeFindAllOptions = {},
+  ): Promise<Employee[]> {
+    const {
+      search,
+      personNumber,
+      email,
+      limit = 25,
+      offset = 0,
+    } = options;
+
+    const where: Prisma.EmployeeWhereInput = {};
+
+    if (personNumber) {
+      where.employeeNumber = {
+        contains: personNumber,
+        mode: 'insensitive',
+      };
+    }
+
+    if (email) {
+      where.email = {
+        contains: email,
+        mode: 'insensitive',
+      };
+    }
+
+    if (search) {
+      where.OR = [
+        {
+          displayName: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          firstName: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          lastName: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          employeeNumber: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          email: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+      ];
+    }
+
     return this.prisma.employee.findMany({
+      where,
       orderBy: {
         displayName: 'asc',
       },
+      skip: offset,
+      take: limit,
+    });
+  }
+
+  async count(
+    options: EmployeeFindAllOptions = {},
+  ): Promise<number> {
+    const {
+      search,
+      personNumber,
+      email,
+    } = options;
+
+    const where: Prisma.EmployeeWhereInput = {};
+
+    if (personNumber) {
+      where.employeeNumber = {
+        contains: personNumber,
+        mode: 'insensitive',
+      };
+    }
+
+    if (email) {
+      where.email = {
+        contains: email,
+        mode: 'insensitive',
+      };
+    }
+
+    if (search) {
+      where.OR = [
+        {
+          displayName: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          firstName: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          lastName: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          employeeNumber: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          email: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+      ];
+    }
+
+    return this.prisma.employee.count({
+      where,
     });
   }
 
@@ -65,10 +202,6 @@ export class EmployeeRepository
         },
       })) > 0
     );
-  }
-
-  async count(): Promise<number> {
-    return this.prisma.employee.count();
   }
 
   async create(
