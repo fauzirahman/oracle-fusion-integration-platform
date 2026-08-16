@@ -27,14 +27,21 @@ export class EmployeesService {
 
     const data = EmployeeMapper.toResponseList(employees);
 
+    // Resolve optional repository values into
+    // concrete pagination values.
+    const limit = options.limit ?? 25;
+    const offset = options.offset ?? 0;
+
     return {
       success: true,
       message: 'Employees retrieved successfully',
       data,
       meta: {
         total,
-        limit: options.limit,
-        offset: options.offset,
+        limit,
+        offset,
+        page: Math.floor(offset / limit) + 1,
+        hasMore: offset + data.length < total,
       },
     };
   }

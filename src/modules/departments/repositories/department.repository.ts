@@ -4,16 +4,39 @@ import { Department, Prisma } from '@prisma/client';
 import { PrismaService } from '../../../database';
 import { SyncUpsertRepository } from '../../../common/sync/sync-upsert.repository';
 
+export interface DepartmentFindAllOptions {
+  limit?: number;
+  offset?: number;
+}
+
 @Injectable()
-export class DepartmentRepository implements SyncUpsertRepository<Prisma.DepartmentCreateInput> {
+export class DepartmentRepository
+  implements SyncUpsertRepository<Prisma.DepartmentCreateInput>
+{
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<Department[]> {
+  async findAll(
+    options?: DepartmentFindAllOptions,
+  ): Promise<Department[]> {
     return this.prisma.department.findMany({
       orderBy: {
         name: 'asc',
       },
+      ...(options?.limit !== undefined
+        ? {
+            take: options.limit,
+          }
+        : {}),
+      ...(options?.offset !== undefined
+        ? {
+            skip: options.offset,
+          }
+        : {}),
     });
+  }
+
+  async count(): Promise<number> {
+    return this.prisma.department.count();
   }
 
   async findById(id: string): Promise<Department | null> {
@@ -27,11 +50,12 @@ export class DepartmentRepository implements SyncUpsertRepository<Prisma.Departm
   async findByOracleId(
     oracleId: string,
   ): Promise<Prisma.DepartmentCreateInput | null> {
-    const department = await this.prisma.department.findUnique({
-      where: {
-        oracleId,
-      },
-    });
+    const department =
+      await this.prisma.department.findUnique({
+        where: {
+          oracleId,
+        },
+      });
 
     if (!department) {
       return null;
@@ -45,7 +69,9 @@ export class DepartmentRepository implements SyncUpsertRepository<Prisma.Departm
     };
   }
 
-  async create(data: Prisma.DepartmentCreateInput): Promise<Department> {
+  async create(
+    data: Prisma.DepartmentCreateInput,
+  ): Promise<Department> {
     return this.prisma.department.create({
       data,
     });
@@ -66,17 +92,18 @@ export class DepartmentRepository implements SyncUpsertRepository<Prisma.Departm
   async upsert(
     data: Prisma.DepartmentCreateInput,
   ): Promise<Prisma.DepartmentCreateInput> {
-    const department = await this.prisma.department.upsert({
-      where: {
-        oracleId: data.oracleId,
-      },
-      create: data,
-      update: {
-        name: data.name,
-        code: data.code,
-        managerId: data.managerId,
-      },
-    });
+    const department =
+      await this.prisma.department.upsert({
+        where: {
+          oracleId: data.oracleId,
+        },
+        create: data,
+        update: {
+          name: data.name,
+          code: data.code,
+          managerId: data.managerId,
+        },
+      });
 
     return {
       oracleId: department.oracleId,

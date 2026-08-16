@@ -1,21 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class SyncRunningItemDto {
-  @ApiProperty({
-    example: 'Employee',
-  })
-  entity: string;
-
-  @ApiProperty({
-    example: 'RUNNING',
-  })
-  status: string;
-
-  @ApiProperty({
-    example: '2026-08-16T03:15:01.893Z',
-  })
-  startedAt: Date;
-}
+import { SyncRunningItemDto } from './sync-running-item.dto';
 
 export class SyncRunningResponseDto {
   @ApiProperty({
@@ -24,12 +9,14 @@ export class SyncRunningResponseDto {
   success: boolean;
 
   @ApiProperty({
-    example: 'Running synchronization jobs retrieved successfully.',
+    example:
+      'Running synchronization jobs retrieved successfully.',
   })
   message: string;
 
   @ApiProperty({
-    type: [SyncRunningItemDto],
+    type: SyncRunningItemDto,
+    isArray: true,
   })
   data: SyncRunningItemDto[];
 }

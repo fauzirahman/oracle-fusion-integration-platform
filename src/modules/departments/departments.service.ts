@@ -1,7 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { DepartmentMapper } from './mappers/department.mapper';
-import { DepartmentRepository } from './repositories/department.repository';
+import {
+  DepartmentFindAllOptions,
+  DepartmentRepository,
+} from './repositories/department.repository';
 
 @Injectable()
 export class DepartmentsService {
@@ -10,14 +16,41 @@ export class DepartmentsService {
     private readonly mapper: DepartmentMapper,
   ) {}
 
-  async findAll() {
-    const departments = await this.repository.findAll();
+  async findAll(
+    options?: DepartmentFindAllOptions,
+  ) {
+    const limit = options?.limit ?? 10;
+    const offset = options?.offset ?? 0;
 
-    return this.mapper.toResponseList(departments);
+    const [departments, total] =
+      await Promise.all([
+        this.repository.findAll({
+          limit,
+          offset,
+        }),
+        this.repository.count(),
+      ]);
+
+    const data =
+      this.mapper.toResponseList(departments);
+
+    return {
+      success: true,
+      message: 'Departments retrieved successfully.',
+      data,
+      meta: {
+        total,
+        limit,
+        offset,
+        page: Math.floor(offset / limit) + 1,
+        hasMore: offset + data.length < total,
+      },
+    };
   }
 
   async findById(id: string) {
-    const department = await this.repository.findById(id);
+    const department =
+      await this.repository.findById(id);
 
     if (!department) {
       throw new NotFoundException(
@@ -25,6 +58,10 @@ export class DepartmentsService {
       );
     }
 
-    return this.mapper.toResponse(department);
+    return {
+      success: true,
+      message: 'Department retrieved successfully.',
+      data: this.mapper.toResponse(department),
+    };
   }
 }

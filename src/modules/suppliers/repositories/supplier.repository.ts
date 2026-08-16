@@ -3,25 +3,49 @@ import { Prisma, Supplier } from '@prisma/client';
 
 import { PrismaService } from '../../../database';
 
+interface SupplierFindAllOptions {
+  limit: number;
+  offset: number;
+}
+
 @Injectable()
 export class SupplierRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+  ) {}
 
-  findAll(): Promise<Supplier[]> {
+  findAll(
+    options: SupplierFindAllOptions = {
+      limit: 10,
+      offset: 0,
+    },
+  ): Promise<Supplier[]> {
     return this.prisma.supplier.findMany({
       orderBy: {
         supplierName: 'asc',
       },
+      take: options.limit,
+      skip: options.offset,
     });
   }
 
-  findById(id: string): Promise<Supplier | null> {
+  count(): Promise<number> {
+    return this.prisma.supplier.count();
+  }
+
+  findById(
+    id: string,
+  ): Promise<Supplier | null> {
     return this.prisma.supplier.findUnique({
-      where: { id },
+      where: {
+        id,
+      },
     });
   }
 
-  findByOracleId(oracleId: string): Promise<Supplier | null> {
+  findByOracleId(
+    oracleId: string,
+  ): Promise<Supplier | null> {
     return this.prisma.supplier.findUnique({
       where: {
         oracleId,
@@ -29,7 +53,9 @@ export class SupplierRepository {
     });
   }
 
-  upsert(data: Prisma.SupplierCreateInput): Promise<Supplier> {
+  upsert(
+    data: Prisma.SupplierCreateInput,
+  ): Promise<Supplier> {
     return this.prisma.supplier.upsert({
       where: {
         oracleId: data.oracleId,
@@ -47,7 +73,9 @@ export class SupplierRepository {
     });
   }
 
-  delete(id: string): Promise<Supplier> {
+  delete(
+    id: string,
+  ): Promise<Supplier> {
     return this.prisma.supplier.delete({
       where: {
         id,
