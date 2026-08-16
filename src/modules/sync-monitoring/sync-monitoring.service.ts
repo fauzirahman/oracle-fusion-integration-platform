@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { SyncLogRepository } from '../sync/repositories/sync-log.repository';
+
+import { SyncHistoryQueryDto } from './dto/sync-history-query.dto';
 
 @Injectable()
 export class SyncMonitoringService {
@@ -12,16 +14,8 @@ export class SyncMonitoringService {
 
   constructor(private readonly repository: SyncLogRepository) {}
 
-  async history(entity?: string) {
-    if (entity) {
-      return this.repository.findByEntity(entity);
-    }
-
-    return this.repository.findAll();
-  }
-
   async status() {
-    return Promise.all(
+    const data = await Promise.all(
       SyncMonitoringService.ENTITIES.map(async (entity) => {
         const latest = await this.repository.latestSuccess(entity);
 
@@ -36,6 +30,12 @@ export class SyncMonitoringService {
         };
       }),
     );
+
+    return {
+      success: true,
+      message: 'Synchronization status retrieved successfully.',
+      data,
+    };
   }
 
   async running() {
@@ -55,6 +55,63 @@ export class SyncMonitoringService {
       }),
     );
 
-    return running.filter(Boolean);
+    const data = running.filter(
+      (item): item is NonNullable<typeof item> => item !== null,
+    );
+
+    return {
+      success: true,
+      message: 'Running synchronization jobs retrieved successfully.',
+      data,
+    };
+  }
+
+  async history(entity: string | undefined, query: SyncHistoryQueryDto) {
+    if (
+      entity &&
+      !SyncMonitoringService.ENTITIES.includes(
+        entity as (typeof SyncMonitoringService.ENTITIES)[number],
+      )
+    ) {
+      throw new BadRequestException(
+        `Unsupported synchronization entity: ${entity}`,
+      );
+    }
+
+    const limit = query.limit ?? 20;
+    const offset = query.offset ?? 0;
+
+    const result = entity
+      ? await this.repository.findByEntity(entity, limit, offset)
+      : await this.repository.findAll(limit, offset);
+
+    const page = Math.floor(offset / limit) + 1;
+
+    const hasMore = offset + result.data.length < result.total;
+
+    const data = result.data.map((item) => ({
+      id: item.id,
+      entity: item.entity,
+      operation: item.operation,
+      status: item.status,
+      totalRecords: item.totalRecords,
+      duration: item.duration,
+      message: item.message,
+      startedAt: item.startedAt,
+      finishedAt: item.finishedAt,
+    }));
+
+    return {
+      success: true,
+      message: 'Synchronization history retrieved successfully.',
+      data,
+      meta: {
+        total: result.total,
+        limit,
+        offset,
+        page,
+        hasMore,
+      },
+    };
   }
 }

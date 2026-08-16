@@ -7,7 +7,9 @@ import { SyncMonitoringService } from './sync-monitoring.service';
 
 @Module({
   imports: [SyncModule],
+
   controllers: [SyncMonitoringController],
+
   providers: [SyncMonitoringService],
 })
 export class SyncMonitoringModule {}

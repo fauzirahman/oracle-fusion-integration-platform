@@ -1,19 +1,26 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { AppController } from './app.controller';
-import { PrismaModule } from './database/prisma.module';
-import { HealthModule } from './modules/health/health.module';
+
+import { CommonModule } from './common/common.module';
+
 import { validationSchema } from './config/env.validation';
-import { OracleModule } from './modules/oracle/oracle.module';
-import { SystemModule } from './modules/system/system.module';
 import configuration from './config/configuration';
+
+import { PrismaModule } from './database/prisma.module';
+
+import { HealthModule } from './modules/health/health.module';
+import { SystemModule } from './modules/system/system.module';
+import { OracleModule } from './modules/oracle/oracle.module';
+
 import { EmployeesModule } from './modules/employees/employees.module';
-import { ScheduleModule } from '@nestjs/schedule';
-import { SyncModule } from './modules/sync/sync.module';
 import { DepartmentsModule } from './modules/departments/departments.module';
 import { SuppliersModule } from './modules/suppliers/suppliers.module';
-import { CommonModule } from './common/common.module';
+
+import { SyncModule } from './modules/sync/sync.module';
+import { SyncMonitoringModule } from './modules/sync-monitoring/sync-monitoring.module';
 
 @Module({
   imports: [
@@ -28,16 +35,20 @@ import { CommonModule } from './common/common.module';
     ScheduleModule.forRoot(),
 
     PrismaModule,
-    
+
     HealthModule,
     SystemModule,
 
     EmployeesModule,
     DepartmentsModule,
     SuppliersModule,
-    SyncModule,  
-    OracleModule,  
+
+    SyncModule,
+    SyncMonitoringModule,
+
+    OracleModule,
   ],
+
   controllers: [AppController],
 })
 export class AppModule {}

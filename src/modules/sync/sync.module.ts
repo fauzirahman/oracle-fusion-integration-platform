@@ -47,6 +47,6 @@ import { GenericSyncProcessor } from '../../common/sync/generic-sync.processor';
     SupplierSyncService,
   ],
 
-  exports: [SyncCoordinatorService, SyncEngineService],
+  exports: [SyncCoordinatorService, SyncEngineService, SyncLogRepository],
 })
 export class SyncModule {}

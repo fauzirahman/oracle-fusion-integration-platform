@@ -59,9 +59,14 @@ export class SyncLogRepository {
         entity,
         status: SyncStatus.SUCCESS,
       },
-      orderBy: {
-        finishedAt: 'desc',
-      },
+      orderBy: [
+        {
+          finishedAt: 'desc',
+        },
+        {
+          startedAt: 'desc',
+        },
+      ],
     });
   }
 
@@ -71,48 +76,67 @@ export class SyncLogRepository {
         entity,
         status: SyncStatus.RUNNING,
       },
-    });
-  }
-
-  /**
-   * History by entity.
-   */
-  async history(entity: string, take = 20): Promise<SyncLog[]> {
-    return this.prisma.syncLog.findMany({
-      where: {
-        entity,
-      },
       orderBy: {
         startedAt: 'desc',
       },
-      take,
     });
   }
 
-  /**
-   * Global history.
-   */
-  async findAll(take = 100): Promise<SyncLog[]> {
-    return this.prisma.syncLog.findMany({
-      orderBy: {
-        startedAt: 'desc',
-      },
-      take,
-    });
+  async findByEntity(
+    entity: string,
+    limit = 20,
+    offset = 0,
+  ): Promise<{
+    data: SyncLog[];
+    total: number;
+  }> {
+    const where = {
+      entity,
+    };
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.syncLog.findMany({
+        where,
+        orderBy: {
+          startedAt: 'desc',
+        },
+        take: limit,
+        skip: offset,
+      }),
+
+      this.prisma.syncLog.count({
+        where,
+      }),
+    ]);
+
+    return {
+      data,
+      total,
+    };
   }
 
-  /**
-   * Alias for monitoring service.
-   */
-  async findByEntity(entity: string, take = 20): Promise<SyncLog[]> {
-    return this.prisma.syncLog.findMany({
-      where: {
-        entity,
-      },
-      orderBy: {
-        startedAt: 'desc',
-      },
-      take,
-    });
+  async findAll(
+    limit = 20,
+    offset = 0,
+  ): Promise<{
+    data: SyncLog[];
+    total: number;
+  }> {
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.syncLog.findMany({
+        orderBy: {
+          startedAt: 'desc',
+        },
+        take: limit,
+        skip: offset,
+      }),
+
+      this.prisma.syncLog.count(),
+    ]);
+
+    return {
+      data,
+      total,
+    };
   }
 }
