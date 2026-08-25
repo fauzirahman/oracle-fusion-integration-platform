@@ -7,5 +7,11 @@ export const validationSchema = Joi.object({
 
   PORT: Joi.number().default(3000),
 
-  DATABASE_URL: Joi.string().required(),
+  DATABASE_REQUIRED: Joi.boolean().truthy('true').falsy('false').default(true),
+
+  DATABASE_URL: Joi.when('DATABASE_REQUIRED', {
+    is: true,
+    then: Joi.string().required(),
+    otherwise: Joi.string().optional(),
+  }),
 });

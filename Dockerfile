@@ -36,28 +36,33 @@ FROM node:22-alpine AS runner
 
 WORKDIR /app
 
+# Production environment
+# NOTE:
+# PORT is intentionally NOT defined here.
+# Google Cloud Run automatically provides PORT=8080.
 ENV NODE_ENV=production
-ENV PORT=8080
 
 # Copy package files
 COPY package*.json ./
 
 # Install production dependencies only
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm ci --omit=dev \
+    && npm cache clean --force
 
-# Copy Prisma Client generated in builder stage
+# Copy generated Prisma Client
 COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/client
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
-# Copy compiled application
+# Copy compiled NestJS application
 COPY --from=builder /app/dist ./dist
 
-# Copy Prisma schema/config
+# Copy Prisma schema and configuration
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./
 
-# Cloud Run listens on port 8080
+# Documentation for container port.
+# Cloud Run will provide PORT=8080 at runtime.
 EXPOSE 8080
 
-# Start production application
+# Start NestJS production application
 CMD ["node", "dist/src/main.js"]

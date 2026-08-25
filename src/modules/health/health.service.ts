@@ -16,9 +16,14 @@ export class HealthService {
       this.oracle(),
     ]);
 
+    const databaseRequired = process.env.DATABASE_REQUIRED !== 'false';
+
+    const databaseHealthy =
+      database.status === 'UP' ||
+      (!databaseRequired && database.status === 'SKIPPED');
+
     return {
-      status:
-        database.status === 'UP' && oracle.status === 'UP' ? 'UP' : 'DOWN',
+      status: databaseHealthy && oracle.status === 'UP' ? 'UP' : 'DOWN',
 
       timestamp: new Date().toISOString(),
 
@@ -29,6 +34,16 @@ export class HealthService {
   }
 
   async database() {
+    const databaseRequired = process.env.DATABASE_REQUIRED !== 'false';
+
+    if (!databaseRequired) {
+      return {
+        status: 'SKIPPED',
+        responseTime: 0,
+        message: 'Database check disabled for this environment',
+      };
+    }
+
     const startedAt = Date.now();
 
     try {
