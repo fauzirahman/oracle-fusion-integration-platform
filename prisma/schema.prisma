@@ -7,11 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Employee {
-  id             String   @id @default(uuid())
-  oracleId       String   @unique
-  employeeNumber String?  @unique
+  id             String      @id @default(uuid())
+  oracleId       String      @unique
+  employeeNumber String?     @unique
   firstName      String
   lastName       String
   displayName    String
@@ -20,50 +19,34 @@ model Employee {
   jobTitle       String?
   status         String
   syncedAt       DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  department Department? @relation(fields: [departmentId], references: [id])
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  department     Department? @relation(fields: [departmentId], references: [id])
 }
 
 model Department {
-  id         String     @id @default(uuid())
-  oracleId   String     @unique
-  name       String
-  code       String?
-  managerId  String?
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-
-  employees  Employee[]
+  id        String     @id @default(uuid())
+  oracleId  String     @unique
+  name      String
+  code      String?
+  managerId String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  employees Employee[]
 }
 
 model SyncLog {
-  id            String   @id @default(uuid())
-
-  entity        String
-  entityId      String?
-
-  operation     String
-
-  status        SyncStatus
-
-  totalRecords  Int      @default(0)
-
-  duration      Int?
-
-  message       String?
-
-  startedAt     DateTime
-  finishedAt    DateTime?
-
-  createdAt     DateTime @default(now())
-}
-
-enum SyncStatus {
-  RUNNING
-  SUCCESS
-  FAILED
+  id           String     @id @default(uuid())
+  entity       String
+  startedAt    DateTime
+  finishedAt   DateTime?
+  createdAt    DateTime   @default(now())
+  totalRecords Int        @default(0)
+  duration     Int?
+  entityId     String?
+  message      String?
+  operation    String
+  status       SyncStatus
 }
 
 model Supplier {
@@ -76,9 +59,40 @@ model Supplier {
   phone          String?
   status         String?
   syncedAt       DateTime
-
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+model SyncCheckpoint {
+  id            String    @id @default(uuid())
+  jobName       String    @unique
+  lastSyncAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastSuccessAt DateTime?
+}
+
+model SyncHistory {
+  id           String     @id @default(uuid())
+  jobName      String
+  startedAt    DateTime
+  finishedAt   DateTime
+  status       SyncStatus
+  total        Int
+  inserted     Int
+  updated      Int
+  failed       Int
+  errorMessage String?
+  createdAt    DateTime   @default(now())
+
+  @@index([jobName])
+  @@index([startedAt])
+}
+
+enum SyncStatus {
+  RUNNING
+  SUCCESS
+  FAILED
 }
 
 enum SyncOperation {
@@ -86,42 +100,4 @@ enum SyncOperation {
   INCREMENTAL
   MANUAL
   SCHEDULED
-}
-
-model SyncCheckpoint {
-  id            String   @id @default(uuid())
-
-  jobName       String   @unique
-
-  lastSyncAt    DateTime?
-
-  lastSuccessAt DateTime?
-
-  createdAt     DateTime @default(now())
-
-  updatedAt     DateTime @updatedAt
-}
-
-model SyncHistory {
-  id          String      @id @default(uuid())
-
-  jobName     String
-
-  startedAt   DateTime
-
-  finishedAt  DateTime
-
-  status      SyncStatus
-
-  total       Int
-  inserted    Int
-  updated     Int
-  failed      Int
-
-  errorMessage String?
-
-  createdAt DateTime @default(now())
-
-  @@index([jobName])
-  @@index([startedAt])
 }
