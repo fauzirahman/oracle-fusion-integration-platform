@@ -8,7 +8,10 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // CORS configuration
+  // =========================================================
+  // CORS CONFIGURATION
+  // =========================================================
+
   const allowedOrigins = [
     'http://localhost:3000',
     'https://oracle-fusion-integration-dashboard.vercel.app',
@@ -16,7 +19,26 @@ async function bootstrap() {
   ];
 
   app.enableCors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow requests without an Origin header,
+      // such as curl and server-to-server requests.
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      const isAllowed =
+        allowedOrigins.includes(origin) ||
+        /^https:\/\/oracle-fusion-integration-dashboard-[a-z0-9-]+\.vercel\.app$/.test(
+          origin,
+        );
+
+      if (isAllowed) {
+        return callback(null, true);
+      }
+
+      return callback(new Error('Not allowed by CORS'), false);
+    },
+
     methods: [
       'GET',
       'HEAD',
@@ -26,25 +48,37 @@ async function bootstrap() {
       'DELETE',
       'OPTIONS',
     ],
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-    ],
+
+    allowedHeaders: ['Content-Type', 'Authorization'],
+
     credentials: false,
   });
+
+  // =========================================================
+  // GLOBAL VALIDATION
+  // =========================================================
 
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+
       transformOptions: {
         enableImplicitConversion: true,
       },
     }),
   );
 
+  // =========================================================
+  // GLOBAL HTTP EXCEPTION FILTER
+  // =========================================================
+
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  // =========================================================
+  // SWAGGER / OPENAPI
+  // =========================================================
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Oracle Fusion Integration Platform')
@@ -52,7 +86,15 @@ async function bootstrap() {
       'Enterprise REST API for Oracle Fusion Cloud Integration',
     )
     .setVersion('1.0.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Enter JWT access token',
+      },
+      'access-token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(
@@ -60,11 +102,23 @@ async function bootstrap() {
     swaggerConfig,
   );
 
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
+
+  // =========================================================
+  // SERVER
+  // =========================================================
 
   const port = Number(process.env.PORT) || 3000;
 
   await app.listen(port, '0.0.0.0');
+
+  // =========================================================
+  // BOOTSTRAP LOGGING
+  // =========================================================
 
   const logger = new Logger('Bootstrap');
 
