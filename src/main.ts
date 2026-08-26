@@ -20,7 +20,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: (origin, callback) => {
-      // Allow requests without an Origin header,
+      // Allow requests without Origin header
       // such as curl and server-to-server requests.
       if (!origin) {
         return callback(null, true);
@@ -28,7 +28,7 @@ async function bootstrap() {
 
       const isAllowed =
         allowedOrigins.includes(origin) ||
-        /^https:\/\/oracle-fusion-integration-dashboard-[a-z0-9-]+\.vercel\.app$/.test(
+        /^https:\/\/oracle-fusion-integration-dashboard.*\.vercel\.app$/.test(
           origin,
         );
 
@@ -36,7 +36,7 @@ async function bootstrap() {
         return callback(null, true);
       }
 
-      return callback(new Error('Not allowed by CORS'), false);
+      return callback(new Error(`Not allowed by CORS: ${origin}`), false);
     },
 
     methods: [
