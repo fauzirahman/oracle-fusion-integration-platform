@@ -1,29 +1,10 @@
 # Oracle Fusion Integration Platform
 
-Enterprise-grade REST API built with NestJS for integrating and synchronizing Oracle Fusion Cloud data with an internal application database.
+Enterprise-style REST API and integration middleware built with **NestJS** to simulate an Oracle Fusion Cloud integration environment.
 
-The platform provides a backend integration layer between an Oracle Fusion environment (or a local mock/simulator) and an internal PostgreSQL database. It exposes standardized REST APIs for employees, departments, suppliers, health monitoring, and synchronization operations.
+The platform provides a backend integration layer between Oracle Fusion-style services and an operational database, with support for employee, department, supplier, health monitoring, and synchronization workflows.
 
----
-
-## Overview
-
-The Oracle Fusion Integration Platform is designed as a backend integration service that demonstrates an enterprise integration architecture similar to an Oracle Fusion Integration Developer / ERP Integration Developer environment.
-
-The platform is responsible for:
-
-- Consuming Oracle Fusion REST APIs
-- Providing a local Oracle Fusion mock/simulator for development
-- Mapping Oracle Fusion data into internal domain models
-- Persisting data into PostgreSQL
-- Synchronizing Oracle Fusion entities
-- Tracking synchronization status and history
-- Providing health monitoring endpoints
-- Exposing documented REST APIs through Swagger/OpenAPI
-- Supporting JWT/Bearer authentication architecture
-- Running locally with Docker
-- Deploying as a containerized service to Google Cloud Run
-- Supporting a Next.js dashboard as the frontend consumer
+This project is designed as a **portfolio implementation for Oracle Fusion Integration / Middleware / Backend Engineering roles**.
 
 ---
 
@@ -31,110 +12,148 @@ The platform is responsible for:
 
 ```text
                          ┌──────────────────────────────┐
-                         │      Oracle Fusion Cloud      │
-                         │                              │
-                         │       REST APIs / HCM        │
+                         │     Oracle Fusion Simulator  │
+                         │        / Mock Service        │
                          └──────────────┬───────────────┘
                                         │
-                                        │ HTTPS
+                                        │ REST / HTTP
                                         ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                Oracle Fusion Integration Platform               │
-│                         NestJS API                              │
-│                                                                 │
-│  ┌──────────────┐    ┌───────────────┐    ┌─────────────────┐  │
-│  │ Oracle Auth  │───▶│ Oracle Client │───▶│ Oracle Provider │  │
-│  └──────────────┘    └───────────────┘    └─────────────────┘  │
-│                                                 │               │
-│                                                 ▼               │
-│                                      ┌─────────────────────┐    │
-│                                      │   Sync Engine       │    │
-│                                      │                     │    │
-│                                      │ - Employees         │    │
-│                                      │ - Departments       │    │
-│                                      │ - Suppliers         │    │
-│                                      └──────────┬──────────┘    │
-│                                                 │               │
-│                                                 ▼               │
-│                                      ┌─────────────────────┐    │
-│                                      │ Prisma ORM          │    │
-│                                      └──────────┬──────────┘    │
-└────────────────────────────────────────────────┼────────────────┘
-                                                 │
-                                                 ▼
-                                      ┌─────────────────────┐
-                                      │ PostgreSQL / Neon   │
-                                      │                     │
-                                      │ Employees           │
-                                      │ Departments         │
-                                      │ Suppliers           │
-                                      │ Sync Logs           │
-                                      │ Sync Checkpoints    │
-                                      └─────────────────────┘
+┌──────────────────────┐       ┌──────────────────────────────┐
+│                      │       │                              │
+│   Next.js Dashboard  │──────▶│     NestJS Integration API   │
+│                      │ REST  │                              │
+└──────────────────────┘       │                              │
+                               │  ┌────────────────────────┐  │
+                               │  │ Oracle Integration      │  │
+                               │  │ Client / Auth Layer     │  │
+                               │  └────────────────────────┘  │
+                               │                              │
+                               │  ┌────────────────────────┐  │
+                               │  │ Employee Module         │  │
+                               │  │ Department Module       │  │
+                               │  │ Supplier Module         │  │
+                               │  │ Sync Module             │  │
+                               │  │ Health Module            │  │
+                               │  └────────────────────────┘  │
+                               │                              │
+                               │        Prisma ORM            │
+                               └──────────────┬───────────────┘
+                                              │
+                                              ▼
+                               ┌──────────────────────────────┐
+                               │       PostgreSQL / Neon      │
+                               │                              │
+                               │ Employees                    │
+                               │ Departments                  │
+                               │ Suppliers                    │
+                               │ Sync Logs                    │
+                               │ Sync Checkpoints             │
+                               └──────────────────────────────┘
+```
 
+---
 
-                    Frontend Consumer
-                           │
-                           │ HTTPS / REST
-                           ▼
-              ┌──────────────────────────┐
-              │ Next.js Dashboard        │
-              │                          │
-              │ Vercel                   │
-              └──────────────────────────┘
+## Features
 
+### Integration
 
-Production Deployment:
+- Oracle Fusion-style REST integration
+- Oracle client abstraction
+- Mock Oracle mode for portfolio/demo environments
+- Centralized integration layer
+- Configurable Oracle authentication
+- REST-based communication
 
-GitHub
-   │
-   ▼
-Docker Build
-   │
-   ▼
-Google Artifact Registry
-   │
-   ▼
-Google Cloud Run
-   │
-   ▼
-Oracle Fusion Integration API
+### Employee Management
 
-Technology Stack
-Backend
-NestJS
-TypeScript
-Prisma ORM
-PostgreSQL
-REST API
-Swagger / OpenAPI
-class-validator
-JWT / Bearer authentication infrastructure
-Axios / HTTP client
-Docker
-Integration
-Oracle Fusion Cloud REST API architecture
-Oracle Fusion mock provider
-Employee synchronization
-Department synchronization
-Supplier synchronization
-Incremental synchronization
-Synchronization checkpoint
-Synchronization history
-Synchronization monitoring
-Cloud
-Google Cloud Run
-Google Artifact Registry
-Google Cloud PostgreSQL-compatible database integration
-Docker container deployment
-Development Tools
-Git
-GitHub
-npm
-Docker Compose
-Prisma CLI
-Swagger UI
-Project Structure
+- Retrieve employees
+- Employee search
+- Pagination
+- Employee detail retrieval
+- Department relationship
+- Employee status
+- Oracle employee identifiers
+
+### Department Management
+
+- Retrieve departments
+- Oracle department identifiers
+- Department code
+- Department manager relationship
+
+### Supplier Management
+
+- Retrieve suppliers
+- Supplier number
+- Supplier name
+- Supplier email
+- Supplier status
+- Pagination
+
+### Synchronization
+
+- Employee synchronization
+- Department synchronization
+- Supplier synchronization
+- Synchronization history
+- Running synchronization monitoring
+- Synchronization status
+- Sync operation tracking
+- Sync checkpoint support
+
+### Monitoring
+
+- Application health
+- Database health
+- Oracle integration health
+- Synchronization status
+- Synchronization history
+- Running synchronization monitoring
+
+### API
+
+- RESTful API
+- Swagger / OpenAPI documentation
+- DTO validation
+- Global validation pipe
+- Global HTTP exception filter
+- CORS support
+- Pagination
+- Standardized API responses
+
+### Deployment
+
+- Docker support
+- Docker Compose support
+- Railway-compatible deployment
+- Google Cloud Run deployment
+- Neon PostgreSQL support
+
+---
+
+# Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| NestJS | Backend framework |
+| TypeScript | Programming language |
+| Prisma | ORM |
+| PostgreSQL | Relational database |
+| Neon | Cloud PostgreSQL |
+| Docker | Containerization |
+| Docker Compose | Local development |
+| Swagger / OpenAPI | API documentation |
+| JWT | Authentication foundation |
+| OAuth 2.0 | Integration authentication foundation |
+| Google Cloud Run | Cloud deployment |
+| Google Artifact Registry | Container image registry |
+| GitHub | Source control |
+
+---
+
+# Project Structure
+
+```text
 oracle-fusion-integration-platform/
 │
 ├── prisma/
@@ -147,7 +166,7 @@ oracle-fusion-integration-platform/
 │   ├── auth/
 │   │   ├── auth.controller.ts
 │   │   ├── auth.module.ts
-│   │   └── ...
+│   │   └── auth.service.ts
 │   │
 │   ├── common/
 │   │   ├── dto/
@@ -160,42 +179,38 @@ oracle-fusion-integration-platform/
 │   │
 │   ├── database/
 │   │   ├── database.module.ts
-│   │   ├── prisma.module.ts
-│   │   └── prisma.service.ts
+│   │   └── prisma.module.ts
 │   │
 │   ├── departments/
 │   │   ├── departments.controller.ts
-│   │   ├── departments.service.ts
-│   │   └── departments.module.ts
+│   │   ├── departments.module.ts
+│   │   └── departments.service.ts
 │   │
 │   ├── employees/
 │   │   ├── employees.controller.ts
+│   │   ├── employees.module.ts
 │   │   ├── employees.service.ts
-│   │   ├── employee.repository.ts
+│   │   ├── repositories/
 │   │   └── ...
 │   │
 │   ├── health/
 │   │   ├── health.controller.ts
-│   │   ├── health.service.ts
-│   │   └── ...
+│   │   ├── health.module.ts
+│   │   └── health.service.ts
 │   │
 │   ├── oracle/
 │   │   ├── oracle-auth.service.ts
 │   │   ├── oracle-client.service.ts
-│   │   ├── oracle.module.ts
-│   │   └── ...
+│   │   └── oracle.module.ts
 │   │
 │   ├── suppliers/
 │   │   ├── suppliers.controller.ts
-│   │   ├── suppliers.service.ts
-│   │   └── suppliers.module.ts
+│   │   ├── suppliers.module.ts
+│   │   └── suppliers.service.ts
 │   │
 │   ├── sync/
-│   │   ├── sync.controller.ts
-│   │   ├── sync.service.ts
-│   │   ├── sync-engine.service.ts
-│   │   ├── sync-monitoring.controller.ts
-│   │   ├── sync-monitoring.service.ts
+│   │   ├── controllers/
+│   │   ├── services/
 │   │   └── ...
 │   │
 │   ├── system/
@@ -204,54 +219,77 @@ oracle-fusion-integration-platform/
 │   ├── app.module.ts
 │   └── main.ts
 │
-├── .env.example
-├── docker-compose.yml
 ├── Dockerfile
+├── docker-compose.yml
 ├── package.json
 ├── prisma.config.ts
+├── tsconfig.json
 └── README.md
-Prerequisites
+```
 
-Before running the project, make sure the following software is installed.
+---
 
-Node.js
+# Prerequisites
 
-Recommended:
+Make sure the following tools are installed:
 
-Node.js >= 20.11
+- Node.js 20+
+- npm 10+
+- Git
+- Docker
+- Docker Compose
 
-Check:
+Optional:
 
-node -v
-npm
-npm -v
-Git
+- Google Cloud CLI (`gcloud`)
+- PostgreSQL client
+- Neon account
+
+Check versions:
+
+```bash
+node --version
+npm --version
 git --version
-Docker
 docker --version
-Docker Compose
 docker compose version
-Installation
+```
+
+---
+
+# Installation
 
 Clone the repository:
 
-git clone https://github.com/YOUR_USERNAME/oracle-fusion-integration-platform.git
+```bash
+git clone <YOUR_GITHUB_REPOSITORY_URL>
+```
 
 Enter the project directory:
 
+```bash
 cd oracle-fusion-integration-platform
+```
 
 Install dependencies:
 
+```bash
 npm install
-Environment Configuration
+```
+
+---
+
+# Environment Configuration
 
 Create the environment file:
 
+```bash
 cp .env.example .env
+```
 
-Example:
+Example configuration:
 
+```env
 PORT=3000
 
 NODE_ENV=development
@@ -260,230 +298,353 @@ APP_NAME=oracle-fusion-integration-platform
 
 ORACLE_MODE=mock
 
-DATABASE_URL="postgresql://postgres:postgres@localhost:5433/oracle_fusion?schema=public"
-Environment Variables
-Variable	Description	Example
-PORT	Application port	3000
-NODE_ENV	Runtime environment	development
-APP_NAME	Application name	oracle-fusion-integration-platform
-ORACLE_MODE	Oracle integration mode	mock
-DATABASE_URL	PostgreSQL connection string	postgresql://...
-Running PostgreSQL with Docker
+DATABASE_REQUIRED=true
 
-The project includes PostgreSQL configuration through Docker Compose.
+DATABASE_URL="postgresql://postgres:postgres@localhost:5433/oracle_fusion"
+```
 
-Start the database:
+For Neon PostgreSQL:
 
+```env
+DATABASE_URL="postgresql://<username>:<password>@<host>/<database>?sslmode=require"
+```
+
+---
+
+# Environment Variables
+
+| Variable | Description |
+|---|---|
+| `PORT` | Application port |
+| `NODE_ENV` | Application environment |
+| `APP_NAME` | Application name |
+| `ORACLE_MODE` | Oracle integration mode |
+| `DATABASE_REQUIRED` | Enable or disable database health requirement |
+| `DATABASE_URL` | PostgreSQL connection string |
+
+---
+
+# Oracle Integration Modes
+
+The application supports a mock Oracle integration mode for portfolio and development environments.
+
+```env
+ORACLE_MODE=mock
+```
+
+Mock mode allows the application to operate without requiring a real Oracle Fusion Cloud account.
+
+This makes the project suitable for:
+
+- Local development
+- Portfolio demonstrations
+- API testing
+- Integration architecture demonstrations
+- Cloud deployment demonstrations
+
+A real Oracle Fusion integration can be configured later by replacing the mock implementation with the actual Oracle Fusion REST endpoints and credentials.
+
+---
+
+# Database Setup
+
+## Option 1 — Local PostgreSQL with Docker
+
+Start PostgreSQL:
+
+```bash
 docker compose up -d postgres
+```
 
 Check running containers:
 
+```bash
 docker ps
+```
 
-Example:
+Run Prisma migrations:
 
-oracle-postgres
-
-PostgreSQL is exposed locally through:
-
-localhost:5433
-Prisma
+```bash
+npx prisma migrate dev
+```
 
 Generate Prisma Client:
 
+```bash
 npx prisma generate
-
-Run database migrations:
-
-npx prisma migrate dev
-
-Reset the development database:
-
-npx prisma migrate reset
+```
 
 Seed the database:
 
-npx prisma db seed
+```bash
+npm run prisma:seed
+```
 
-Open Prisma Studio:
+---
 
+# Option 2 — Neon PostgreSQL
+
+The application can also use Neon PostgreSQL.
+
+Configure:
+
+```env
+DATABASE_URL="postgresql://<username>:<password>@<host>/<database>?sslmode=require"
+```
+
+Check migration status:
+
+```bash
+npx prisma migrate status
+```
+
+Apply migrations:
+
+```bash
+npx prisma migrate deploy
+```
+
+Generate Prisma Client:
+
+```bash
+npx prisma generate
+```
+
+Seed the database:
+
+```bash
+npm run prisma:seed
+```
+
+---
+
+# Prisma
+
+Check Prisma migration status:
+
+```bash
+npx prisma migrate status
+```
+
+Create a development migration:
+
+```bash
+npx prisma migrate dev
+```
+
+Apply production migrations:
+
+```bash
+npx prisma migrate deploy
+```
+
+Generate Prisma Client:
+
+```bash
+npx prisma generate
+```
+
+Inspect the database:
+
+```bash
 npx prisma studio
-Seed Data
+```
 
-The project includes mock enterprise data for development.
+Reset the development database:
 
-Example entities:
+```bash
+npx prisma migrate reset
+```
 
-Departments
-Finance
-Human Resources
-Information Technology
-Procurement
-Employees
+> Do not use `migrate reset` against a production database.
 
-The database contains sample employee records including:
+---
 
-John Smith
-Sarah Wilson
-Michael Brown
-David Miller
-Emily Davis
-...
-Suppliers
+# Running the Application
 
-Example suppliers include:
+## Development
 
-PT Digital Integrasi Indonesia
-PT Global Software Solution
-PT Mitra Teknologi Nusantara
-PT Enterprise Hardware
-...
-Development
-
-Start the application:
-
+```bash
 npm run start:dev
+```
 
 The API will be available at:
 
+```text
 http://localhost:3000
-Production Build
+```
 
-Build the application:
+---
 
+## Production
+
+Build:
+
+```bash
 npm run build
+```
 
-Start the production application:
+Start:
 
+```bash
 npm run start:prod
-API Documentation
+```
 
-Swagger UI is available at:
+---
 
+# API Documentation
+
+Swagger documentation is available at:
+
+```text
 http://localhost:3000/api
+```
 
-Swagger provides interactive documentation for the REST API.
+The Swagger UI provides interactive documentation for the REST API.
 
-The API uses Bearer authentication configuration for protected endpoints.
+The API uses bearer authentication support where authentication is enabled.
 
-REST API
-Health
-Application Health
+---
+
+# API Endpoints
+
+## Health
+
+### Application Health
+
+```http
 GET /health
+```
 
 Example:
 
+```bash
 curl http://localhost:3000/health
+```
 
-Example response:
+---
 
-{
-  "status": "UP",
-  "database": {
-    "status": "UP",
-    "responseTime": 6
-  },
-  "oracle": {
-    "status": "UP",
-    "responseTime": 1
-  }
-}
-Database Health
+### Database Health
+
+```http
 GET /health/database
+```
 
 Example:
 
+```bash
 curl http://localhost:3000/health/database
+```
 
 Example response:
 
+```json
 {
   "status": "UP",
   "responseTime": 6
 }
-Oracle Health
+```
+
+---
+
+### Oracle Health
+
+```http
 GET /health/oracle
+```
 
 Example:
 
+```bash
 curl http://localhost:3000/health/oracle
-Employees API
-Get Employees
+```
+
+---
+
+# Employees
+
+## Get Employees
+
+```http
 GET /employees
+```
 
 Example:
 
+```bash
 curl http://localhost:3000/employees
+```
 
-The endpoint supports pagination and filtering.
+---
 
-Search
-GET /employees?search=john
-Limit
-GET /employees?limit=25
-Offset
-GET /employees?limit=10&offset=10
-Example Response
-{
-  "success": true,
-  "message": "Employees retrieved successfully",
-  "data": [
-    {
-      "id": "uuid",
-      "oracleId": "EMP-001",
-      "employeeNumber": "10001",
-      "firstName": "John",
-      "lastName": "Smith",
-      "displayName": "John Smith",
-      "email": "john.smith@example.com",
-      "departmentId": "uuid",
-      "jobTitle": null,
-      "status": "ACTIVE",
-      "syncedAt": null,
-      "createdAt": "2026-08-25T13:04:32.128Z",
-      "updatedAt": "2026-08-25T13:04:32.128Z"
-    }
-  ],
-  "meta": {
-    "total": 20,
-    "limit": 25,
-    "offset": 0,
-    "page": 1,
-    "hasMore": false
-  }
-}
-Get Employee Detail
+## Search Employees
+
+```http
+GET /employees?search=John
+```
+
+Example:
+
+```bash
+curl "http://localhost:3000/employees?search=John"
+```
+
+---
+
+## Employee Pagination
+
+```http
+GET /employees?limit=10&offset=0
+```
+
+Example:
+
+```bash
+curl "http://localhost:3000/employees?limit=10&offset=0"
+```
+
+---
+
+## Get Employee Detail
+
+```http
 GET /employees/:id
+```
 
 Example:
 
-curl http://localhost:3000/employees/EMPLOYEE_ID
-Departments API
-Get Departments
+```bash
+curl http://localhost:3000/employees/<employee-id>
+```
+
+---
+
+# Departments
+
+## Get Departments
+
+```http
 GET /departments
+```
 
 Example:
 
+```bash
 curl http://localhost:3000/departments
+```
 
 Example response:
 
+```json
 {
   "success": true,
   "message": "Departments retrieved successfully.",
   "data": [
     {
-      "id": "uuid",
+      "id": "782b1146-0b2a-4228-886b-c80262b85692",
       "oracleId": "200",
       "name": "Finance",
       "code": "FIN",
-      "managerId": null
-    },
-    {
-      "id": "uuid",
-      "oracleId": "300",
-      "name": "Human Resources",
-      "code": "HR",
       "managerId": null
     }
   ],
@@ -495,561 +656,630 @@ Example response:
     "hasMore": false
   }
 }
-Suppliers API
-Get Suppliers
+```
+
+---
+
+# Suppliers
+
+## Get Suppliers
+
+```http
 GET /suppliers
+```
 
 Example:
 
+```bash
 curl http://localhost:3000/suppliers
+```
 
-Example response:
+---
 
-{
-  "success": true,
-  "message": "Suppliers retrieved successfully.",
-  "data": [
-    {
-      "id": "uuid",
-      "supplierNumber": "V0010",
-      "supplierName": "PT Cipta Infrastruktur Teknologi",
-      "email": "info@ciptainfrastruktur.id",
-      "status": "ACTIVE"
-    }
-  ],
-  "meta": {
-    "total": 18,
-    "limit": 10,
-    "offset": 0,
-    "page": 1,
-    "hasMore": true
-  }
-}
-Synchronization API
+## Supplier Pagination
 
-The synchronization module demonstrates an enterprise-style integration workflow between Oracle Fusion and the internal database.
+```http
+GET /suppliers?limit=10&offset=0
+```
 
-Supported entities:
+Example:
 
-Employee
-Department
-Supplier
-Employee Synchronization
+```bash
+curl "http://localhost:3000/suppliers?limit=10&offset=0"
+```
+
+---
+
+# Synchronization
+
+The synchronization layer provides controlled data synchronization between Oracle Fusion-style sources and the integration database.
+
+---
+
+## Synchronize Employees
+
+```http
 POST /sync/employees
+```
 
 Example:
 
+```bash
 curl -X POST http://localhost:3000/sync/employees
+```
 
-The synchronization process can:
+---
 
-Retrieve records from the Oracle provider
-Transform Oracle records
-Compare records with PostgreSQL
-Insert new records
-Update existing records
-Track synchronization results
-Record synchronization history
-Update synchronization checkpoints
-Department Synchronization
+## Synchronize Departments
+
+```http
 POST /sync/departments
+```
 
 Example:
 
+```bash
 curl -X POST http://localhost:3000/sync/departments
-Supplier Synchronization
+```
+
+---
+
+## Synchronize Suppliers
+
+```http
 POST /sync/suppliers
+```
 
 Example:
 
+```bash
 curl -X POST http://localhost:3000/sync/suppliers
-Synchronization Monitoring
+```
 
-The platform provides endpoints for monitoring synchronization operations.
+---
 
-Synchronization Status
+# Synchronization Monitoring
+
+## Synchronization Status
+
+```http
 GET /sync/status
+```
 
 Example:
 
+```bash
 curl http://localhost:3000/sync/status
+```
 
-The endpoint provides information such as:
+---
 
-Entity
-Status
-Last Sync
-Total Records
-Success Count
-Failed Count
-Running Synchronizations
-GET /sync/running
+## Synchronization History
+
+```http
+GET /sync/history
+```
 
 Example:
 
+```bash
+curl "http://localhost:3000/sync/history?limit=10&offset=0"
+```
+
+---
+
+## Running Synchronization
+
+```http
+GET /sync/running
+```
+
+Example:
+
+```bash
 curl http://localhost:3000/sync/running
+```
 
 Example response when there is no active synchronization:
 
+```json
 {
   "success": true,
   "message": "Running synchronizations retrieved successfully.",
   "data": []
 }
-Synchronization History
-GET /sync/history
+```
 
-Example:
+---
 
-curl http://localhost:3000/sync/history
+# Standard API Response
 
-Pagination:
+Successful responses generally follow a consistent structure.
 
-curl "http://localhost:3000/sync/history?limit=10&offset=0"
-
-Example response:
-
+```json
 {
   "success": true,
-  "message": "Synchronization history retrieved successfully.",
+  "message": "Employees retrieved successfully",
   "data": [],
   "meta": {
-    "total": 0,
-    "limit": 10,
+    "total": 20,
+    "limit": 25,
     "offset": 0,
     "page": 1,
     "hasMore": false
   }
 }
-Oracle Fusion Integration
+```
 
-The Oracle module abstracts communication with Oracle Fusion Cloud.
+This structure provides:
 
-The architecture separates Oracle communication from business logic through an Oracle client/provider layer.
+- Operation status
+- Human-readable message
+- Response data
+- Pagination metadata where applicable
 
-Conceptually:
+---
 
-Application
-     │
-     ▼
-OracleClientService
-     │
-     ▼
-Oracle Fusion REST API
-     │
-     ▼
-HCM / ERP Resources
+# Validation
 
-For development and portfolio demonstration, the project supports mock mode.
+The application uses NestJS `ValidationPipe` with:
 
-Oracle Mock Mode
+```text
+whitelist: true
+forbidNonWhitelisted: true
+transform: true
+enableImplicitConversion: true
+```
 
-The application can run without a real Oracle Fusion Cloud account.
+This provides:
 
-Set:
+- DTO validation
+- Automatic type transformation
+- Protection against unexpected request properties
+- Consistent request validation
 
-ORACLE_MODE=mock
+---
 
-Mock data is stored under:
+# CORS
 
-src/mocks/
+The API allows requests from configured frontend origins.
+
+The configuration supports:
+
+- Local Next.js development
+- Production frontend
+- Vercel preview deployments
+
+Vercel preview origins are supported using a controlled origin pattern.
 
 Example:
 
-src/mocks/workers.json
-src/mocks/departments.json
+```text
+https://oracle-fusion-integration-dashboard-*.vercel.app
+```
 
-This allows the synchronization workflow to be demonstrated without external Oracle credentials.
+CORS is configured in:
 
-Validation
+```text
+src/main.ts
+```
 
-Global validation is enabled using NestJS ValidationPipe.
+---
 
-Configuration includes:
-
-whitelist
-forbidNonWhitelisted
-transform
-implicit conversion
-
-This helps prevent unexpected request properties from entering application logic.
-
-Error Handling
-
-The application uses a global HTTP exception filter.
-
-Location:
-
-src/common/filters/http-exception.filter.ts
-
-The filter provides standardized API error responses.
-
-CORS
-
-CORS is configured for the frontend dashboard.
-
-Allowed origins include:
-
-http://localhost:3000
-
-The production dashboard:
-
-https://oracle-fusion-integration-dashboard.vercel.app
-
-Vercel preview deployments matching:
-
-https://oracle-fusion-integration-dashboard*.vercel.app
-
-are also supported.
-
-This allows the deployed Next.js dashboard to communicate with the backend API hosted on Google Cloud Run.
-
-Docker
+# Docker
 
 Build the application image:
 
-docker build -t oracle-fusion-api .
+```bash
+docker build -t oracle-fusion-integration-platform .
+```
 
 Run the container:
 
-docker run --env-file .env -p 3000:3000 oracle-fusion-api
-Docker Compose
+```bash
+docker run --rm \
+  -p 3000:3000 \
+  --env-file .env \
+  oracle-fusion-integration-platform
+```
 
-Start the complete local environment:
+---
 
+# Docker Compose
+
+Start the development environment:
+
+```bash
 docker compose up -d
+```
 
-Stop the environment:
+View running services:
 
-docker compose down
+```bash
+docker compose ps
+```
 
 View logs:
 
-docker compose logs -f
-Google Cloud Run Deployment
+```bash
+docker compose logs -f app
+```
 
-The backend is deployable as a containerized application to Google Cloud Run.
+Stop services:
 
-Example production service:
+```bash
+docker compose down
+```
 
-oracle-fusion-api
+---
 
-Region:
+# Google Cloud Run Deployment
 
-asia-southeast1
-
-The deployed API follows the Cloud Run service architecture:
-
-Internet
-    │
-    ▼
-Google Cloud Run
-    │
-    ▼
-NestJS Container
-    │
-    ├── PostgreSQL
-    │
-    └── Oracle Integration Layer
-Cloud Run Service
-
-Example service:
-
-oracle-fusion-api
-
-Region:
-
-asia-southeast1
-
-The deployed API endpoint can be verified using:
-
-curl https://YOUR-CLOUD-RUN-URL/health
-
-Database health:
-
-curl https://YOUR-CLOUD-RUN-URL/health/database
-
-Employees:
-
-curl https://YOUR-CLOUD-RUN-URL/employees
-
-Departments:
-
-curl https://YOUR-CLOUD-RUN-URL/departments
-
-Suppliers:
-
-curl https://YOUR-CLOUD-RUN-URL/suppliers
-Cloud Run Container Image
-
-The service is deployed using a container image stored in Google Artifact Registry.
+The backend can be deployed to Google Cloud Run using a container image.
 
 Example image:
 
+```text
 asia-southeast1-docker.pkg.dev/oracle-fusion-portfolio/oracle-fusion-api/oracle-fusion-api:latest
-API Verification
+```
 
-Production API can be tested using:
+Example Cloud Run service:
 
-curl -s https://YOUR-CLOUD-RUN-URL/health | jq
+```text
+oracle-fusion-api
+```
 
-Example database verification:
+Region:
 
-curl -i \
-  -H "Origin: https://oracle-fusion-integration-dashboard.vercel.app" \
-  https://YOUR-CLOUD-RUN-URL/health/database
+```text
+asia-southeast1
+```
 
-A successful CORS response should contain:
+Deploy using:
 
-access-control-allow-origin:
-https://oracle-fusion-integration-dashboard.vercel.app
-Git Workflow
+```bash
+gcloud run deploy oracle-fusion-api \
+  --image asia-southeast1-docker.pkg.dev/oracle-fusion-portfolio/oracle-fusion-api/oracle-fusion-api:latest \
+  --region asia-southeast1
+```
 
-Check repository status:
+Check the deployed image:
 
-git status
+```bash
+gcloud run services describe oracle-fusion-api \
+  --region=asia-southeast1 \
+  --format="value(spec.template.spec.containers[0].image)"
+```
 
-View changes:
+Check the latest ready revision:
 
-git diff
+```bash
+gcloud run services describe oracle-fusion-api \
+  --region=asia-southeast1 \
+  --format="value(status.latestReadyRevisionName)"
+```
 
-Stage changes:
+---
 
-git add .
+# Production API
 
-Commit:
+The deployed backend is currently hosted on Google Cloud Run.
 
-git commit -m "docs: update backend readme"
+Example:
 
-Push:
+```text
+https://oracle-fusion-api-832119751212.asia-southeast1.run.app
+```
 
-git push origin main
-Development Workflow
+Health check:
 
-Typical development workflow:
+```bash
+curl https://oracle-fusion-api-832119751212.asia-southeast1.run.app/health
+```
 
-1. Start PostgreSQL
-       │
-       ▼
-2. Run Prisma migrations
-       │
-       ▼
-3. Seed development data
-       │
-       ▼
-4. Start NestJS
-       │
-       ▼
-5. Test REST API
-       │
-       ▼
-6. Test synchronization
-       │
-       ▼
-7. Verify dashboard integration
-       │
-       ▼
-8. Run production build
-       │
-       ▼
-9. Build Docker image
-       │
-       ▼
-10. Deploy to Cloud Run
-Testing API Locally
+Database health:
 
-Health:
-
-curl http://localhost:3000/health
-
-Employees:
-
-curl http://localhost:3000/employees | jq
+```bash
+curl https://oracle-fusion-api-832119751212.asia-southeast1.run.app/health/database
+```
 
 Departments:
 
-curl http://localhost:3000/departments | jq
+```bash
+curl https://oracle-fusion-api-832119751212.asia-southeast1.run.app/departments
+```
+
+Employees:
+
+```bash
+curl https://oracle-fusion-api-832119751212.asia-southeast1.run.app/employees
+```
 
 Suppliers:
 
-curl http://localhost:3000/suppliers | jq
+```bash
+curl https://oracle-fusion-api-832119751212.asia-southeast1.run.app/suppliers
+```
+
+---
+
+# Frontend Integration
+
+The backend is designed to be consumed by the companion Next.js dashboard:
+
+```text
+Oracle Fusion Integration Dashboard
+```
+
+The frontend configures the API URL using:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=https://oracle-fusion-api-832119751212.asia-southeast1.run.app
+```
+
+The dashboard consumes endpoints including:
+
+```text
+GET /health
+GET /health/database
+GET /health/oracle
+
+GET /employees
+GET /employees/:id
+
+GET /departments
+GET /suppliers
+
+GET /sync/status
+GET /sync/history
+GET /sync/running
+```
+
+---
+
+# Development Workflow
+
+Typical development workflow:
+
+```text
+1. Update source code
+       │
+       ▼
+2. Run development server
+       │
+       ▼
+3. Test API locally
+       │
+       ▼
+4. Run Prisma migration if required
+       │
+       ▼
+5. Run production build
+       │
+       ▼
+6. Build Docker image
+       │
+       ▼
+7. Push image to registry
+       │
+       ▼
+8. Deploy to Cloud Run
+       │
+       ▼
+9. Test production endpoints
+       │
+       ▼
+10. Connect frontend dashboard
+```
+
+---
+
+# Testing API
+
+Health:
+
+```bash
+curl -i http://localhost:3000/health
+```
+
+Database:
+
+```bash
+curl -i http://localhost:3000/health/database
+```
+
+Employees:
+
+```bash
+curl -s http://localhost:3000/employees | jq
+```
+
+Departments:
+
+```bash
+curl -s http://localhost:3000/departments | jq
+```
+
+Suppliers:
+
+```bash
+curl -s http://localhost:3000/suppliers | jq
+```
 
 Synchronization status:
 
-curl http://localhost:3000/sync/status | jq
+```bash
+curl -s http://localhost:3000/sync/status | jq
+```
 
 Synchronization history:
 
-curl http://localhost:3000/sync/history | jq
+```bash
+curl -s \
+  "http://localhost:3000/sync/history?limit=10&offset=0" \
+  | jq
+```
 
 Running synchronization:
 
-curl http://localhost:3000/sync/running | jq
-Production Verification
+```bash
+curl -s http://localhost:3000/sync/running | jq
+```
 
-After deploying to Google Cloud Run:
+---
 
-curl -s \
-  https://YOUR-CLOUD-RUN-URL/health \
-  | jq
+# Build Verification
 
-Test employees:
+Run the production build:
 
-curl -s \
-  https://YOUR-CLOUD-RUN-URL/employees \
-  | jq
+```bash
+npm run build
+```
 
-Test departments:
+Expected result:
 
-curl -s \
-  https://YOUR-CLOUD-RUN-URL/departments \
-  | jq
+```text
+✓ Compiled successfully
+✓ Finished TypeScript
+✓ Collecting page data
+✓ Generating static pages
+✓ Finalizing page optimization
+```
 
-Test suppliers:
+---
 
-curl -s \
-  https://YOUR-CLOUD-RUN-URL/suppliers \
-  | jq
+# Git Workflow
 
-Test CORS:
+Check repository status:
 
-curl -i \
-  -H "Origin: https://oracle-fusion-integration-dashboard.vercel.app" \
-  https://YOUR-CLOUD-RUN-URL/health/database
-Design Principles
+```bash
+git status
+```
 
-The project follows several enterprise integration principles.
+Review changes:
 
-Separation of Concerns
+```bash
+git diff
+```
 
-Integration logic, business logic, persistence, and API controllers are separated into independent modules.
+Stage changes:
 
-Repository Pattern
+```bash
+git add .
+```
 
-Database operations are encapsulated in repository classes instead of being directly implemented inside controllers.
+Create a commit:
 
-Service Layer
+```bash
+git commit -m "docs: update backend README"
+```
 
-Business logic is implemented inside service classes.
+Push to GitHub:
 
-Provider Abstraction
+```bash
+git push origin main
+```
 
-Oracle Fusion communication is abstracted behind provider/client components so the application can operate with either:
+---
 
-Mock Provider
+# Project Goals
 
-or:
+This project demonstrates practical experience with:
 
-Oracle Fusion REST API
-Incremental Synchronization
+- Enterprise REST API development
+- Oracle Fusion integration concepts
+- Middleware architecture
+- REST API integration
+- PostgreSQL data management
+- Prisma ORM
+- Data synchronization
+- Incremental synchronization concepts
+- Sync checkpoint management
+- API health monitoring
+- Error handling
+- Request validation
+- API documentation
+- Docker containerization
+- Cloud deployment
+- Frontend/backend integration
+- Cloud database integration
 
-Synchronization can use checkpoints to avoid processing the entire dataset repeatedly.
+---
 
-Observability
+# Future Improvements
 
-Synchronization activity is tracked through:
+Potential future enhancements include:
 
-Sync Status
-Sync History
-Sync Running State
-Health Checks
-Security Considerations
+- OAuth 2.0 implementation with Oracle Fusion
+- Production Oracle Fusion Cloud integration
+- BullMQ-based background synchronization
+- Redis-based job processing
+- Advanced retry strategy
+- Dead-letter queue
+- Idempotency handling
+- Distributed locking
+- Advanced sync checkpoint management
+- Prometheus metrics
+- Grafana dashboards
+- Structured logging
+- OpenTelemetry tracing
+- GitHub Actions CI/CD
+- Automated integration testing
+- Rate limiting
+- API versioning
+- Role-based access control
+- Audit logging
 
-The project includes infrastructure for API authentication using Bearer tokens.
+---
 
-The application also implements:
+# Related Project
 
-Request validation
-Whitelisted properties
-Non-whitelisted property rejection
-Standardized exception handling
-CORS restrictions
-Environment-based configuration
+Frontend dashboard:
 
-Production secrets should never be committed to Git.
+```text
+Oracle Fusion Integration Dashboard
+```
 
-Use environment variables or a managed secret solution for:
+The dashboard provides an operational UI for:
 
-DATABASE_URL
-Oracle credentials
-JWT secrets
-API credentials
-Database
+- Employee directory
+- Employee details
+- Department data
+- Supplier data
+- Synchronization monitoring
+- Health monitoring
+- Integration status
 
-The project uses PostgreSQL as the integration database.
+---
 
-Main domain entities include:
+# Portfolio Context
 
-Employee
-Department
-Supplier
-SyncLog
-SyncCheckpoint
+This project is intended to demonstrate an enterprise integration architecture similar to systems commonly used in Oracle Fusion Cloud integration environments.
 
-Prisma manages:
+The architecture separates:
 
-Schema
-Migrations
-Database access
-Type-safe queries
-API Response Standard
+```text
+Frontend
+   │
+   ▼
+Integration API
+   │
+   ├── Oracle Client
+   │
+   ├── Business Modules
+   │
+   ├── Synchronization Layer
+   │
+   └── Health Monitoring
+           │
+           ▼
+      PostgreSQL
+```
 
-The API follows a consistent response structure.
+The implementation uses a mock Oracle integration layer so the complete architecture can be demonstrated without requiring access to a production Oracle Fusion Cloud environment.
 
-Successful response:
+---
 
-{
-  "success": true,
-  "message": "Operation completed successfully.",
-  "data": []
-}
+# License
 
-
-Paginated response:
-
-{
-  "success": true,
-  "message": "Records retrieved successfully.",
-  "data": [],
-  "meta": {
-    "total": 0,
-    "limit": 10,
-    "offset": 0,
-    "page": 1,
-    "hasMore": false
-  }
-}
-Current Status
-
-The current backend implementation includes:
-
- NestJS application
- TypeScript
- PostgreSQL
- Prisma ORM
- Prisma migrations
- Database seed
- Employee API
- Department API
- Supplier API
- Oracle integration abstraction
- Oracle mock mode
- Employee synchronization
- Department synchronization
- Supplier synchronization
- Synchronization history
- Synchronization monitoring
- Running synchronization monitoring
- Synchronization checkpoint
- Pagination
- Search
- Global validation
- Global exception filter
- Health monitoring
- Swagger / OpenAPI
- CORS configuration
- Docker
- Docker Compose
- Google Cloud Run deployment
- Production API verification
- Next.js dashboard integration
+This project is intended for portfolio and educational purposes.
